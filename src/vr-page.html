@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Régua das Águas RV</title>
+<meta name="description" content="Demo de realidade virtual do jogo A Régua das Águas (IVSH): encontre três problemas no entorno do açude. Cenário de treino, dados ilustrativos.">
+<style>
+/*__FONTS__*/
+:root{--navy:#0A1B4D;--royal:#1B46C2;--ice:#EEF3FD;--line:#C9D7F3;--muted:#4A5E85;--font-body:'Barlow',system-ui,sans-serif;--font-cond:'Barlow Condensed','Arial Narrow',system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0A1B4D;color:#fff;font-family:var(--font-body);overflow:hidden}
+[hidden]{display:none!important}
+#gamebox{position:fixed;inset:0}
+#gl{display:block;width:100%;height:100%;touch-action:none}
+.menu{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(10,27,77,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:10}
+.card{width:min(520px,100%);background:#fff;color:var(--navy);border-radius:16px;padding:22px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.k{font:700 13px var(--font-cond);letter-spacing:.09em;text-transform:uppercase;color:var(--royal)}
+h1{font:800 34px/1.05 var(--font-cond);margin:4px 0 8px}
+p{margin:0 0 10px;line-height:1.45}
+.note{font-size:13px;color:var(--muted)}
+.btns{display:grid;gap:8px;margin-top:14px}
+button{font:600 16px var(--font-body);border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--navy);padding:12px 14px;cursor:pointer;text-align:left}
+button.pri{background:var(--royal);border-color:var(--royal);color:#fff}
+button[disabled]{opacity:.5;cursor:not-allowed}
+button small{display:block;font-weight:400;font-size:13px;color:inherit;opacity:.8;margin-top:2px}
+.hud{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:flex-end;gap:10px;z-index:5;pointer-events:none}
+.tip{background:rgba(255,255,255,.94);color:var(--navy);border-radius:10px;padding:8px 12px;font-size:14px;max-width:560px;pointer-events:auto}
+.tip b{font-family:var(--font-cond);font-size:16px;letter-spacing:.02em}
+.tools{display:flex;gap:6px;pointer-events:auto}
+.tools button{padding:8px 10px;font-size:14px;min-width:40px;text-align:center}
+.cross{position:fixed;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.4);z-index:4;pointer-events:none}
+#dlg,#hudg,#obj{display:none}
+</style>
+</head>
+<body>
+<div id="gamebox"><canvas id="gl" aria-label="Cena 3D do açude em realidade virtual"></canvas><div id="dlg"></div><div id="hudg" class="hudx"></div><div id="obj"></div></div>
+<div class="cross" id="cross" hidden></div><div id="gload" hidden></div>
+<div class="menu" id="menu">
+  <div class="card">
+    <div class="k">A Régua das Águas · demo de RV</div>
+    <h1>Encontre 3 problemas no entorno do açude</h1>
+    <p>Você chega pela parede do açude. A régua do IVSH sobe da água. Olhe em volta e aponte para três problemas na margem. Círculos azuis no chão levam você para mais perto.</p>
+    <p class="note">Cenário de treino com dados ilustrativos; o Açude Gavião entra quando chegarem o contorno e as fichas de campo. Óculos: indicação do fabricante a partir de 10 anos; sessões curtas, com um adulto por perto.</p>
+    <div class="btns">
+      <button type="button" class="pri" id="bvr" disabled>Entrar nos óculos de RV<small id="bvrs">Verificando se este aparelho tem RV…</small></button>
+      <button type="button" id="b360">Modo 360° no celular<small>Mexa o celular para olhar em volta; toque para apontar</small></button>
+      <button type="button" id="bdesk">Ver no computador<small>Arraste para olhar; clique para apontar</small></button>
+      <a href="index.html" style="color:#1B46C2;font-size:14px;margin-top:4px">Voltar ao jogo completo</a>
+    </div>
+  </div>
+</div>
+<div class="hud" id="hud" hidden><div class="tip" id="tip"></div><div class="tools"><button type="button" id="gsound" title="Som">🔊</button><button type="button" id="bmenu" title="Menu">☰</button></div></div>
+<!--__THREE__-->
+<!--__APP__-->
+</body>
+</html>

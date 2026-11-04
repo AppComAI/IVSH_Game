@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A Régua das Águas</title>
+<meta name="description" content="RPG 3D educativo sobre o IVSH, Índice de Vulnerabilidade Socioambiental de Sistemas Hídricos proposto para a Gerência Metropolitana de Fortaleza. Açudes e dados fictícios.">
+<style>
+/*__FONTS__*/
+:root{
+  --bg:#EEF3FD; --surface:#ffffff; --surface2:#F6F9FF; --fg:#0A1B4D; --muted:#4A5E85; --line:#C9D7F3;
+  --accent:#1B46C2; --accent2:#2D5FE0; --accent-soft:#DCE6FA; --teal:#00949A;
+  --ok:#1f7a4d; --ok-soft:#dff2e7; --warn:#9a5b00; --warn-soft:#fbeed6; --crit:#B3261E; --crit-soft:#fbe3e1;
+  --v0:#A9C0FF; --v1:#6F93F0; --v2:#2D5FE0; --v3:#0A1B4D; --v0t:#0A1B4D; --v1t:#0A1B4D; --v2t:#ffffff; --v3t:#ffffff;
+  --fx-baixa:#00949A; --fx-mod:#B98B00; --fx-alta:#D9601A; --fx-crit:#B3261E;
+  --font-body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-cond:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(10,27,77,.06),0 6px 20px rgba(10,27,77,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#081130; --surface:#0F1B45; --surface2:#13225A; --fg:#E6ECFA; --muted:#A3B3D6; --line:#25356B;
+    --accent:#86A6FF; --accent2:#A9C0FF; --accent-soft:#1A2A63; --teal:#3CC7CC;
+    --ok:#5fd09a; --ok-soft:#123a2a; --warn:#e8b45a; --warn-soft:#3a2d14; --crit:#ff8a80; --crit-soft:#3e1715;
+    --v0:#24397E; --v1:#3E69DE; --v2:#86A6FF; --v3:#DCE6FA; --v0t:#E6ECFA; --v1t:#ffffff; --v2t:#081130; --v3t:#081130;
+    --fx-baixa:#3CC7CC; --fx-mod:#E8C14A; --fx-alta:#F59055; --fx-crit:#FF7A70;
+    --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#081130; --surface:#0F1B45; --surface2:#13225A; --fg:#E6ECFA; --muted:#A3B3D6; --line:#25356B;
+  --accent:#86A6FF; --accent2:#A9C0FF; --accent-soft:#1A2A63; --teal:#3CC7CC;
+  --ok:#5fd09a; --ok-soft:#123a2a; --warn:#e8b45a; --warn-soft:#3a2d14; --crit:#ff8a80; --crit-soft:#3e1715;
+  --v0:#24397E; --v1:#3E69DE; --v2:#86A6FF; --v3:#DCE6FA; --v0t:#E6ECFA; --v1t:#ffffff; --v2t:#081130; --v3t:#081130;
+  --fx-baixa:#3CC7CC; --fx-mod:#E8C14A; --fx-alta:#F59055; --fx-crit:#FF7A70;
+  --shadow:none; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.5;margin:0;
+  padding-block:22px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px}
+button:hover{border-color:var(--accent)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+button.pri{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button.pri{color:#081130}}
+:root[data-theme="dark"] button.pri{color:#081130}
+a{color:var(--accent)}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+/* cabeçalho */
+.top{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:flex-end;justify-content:space-between}
+.kick{font:700 13px var(--font-cond);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+h1{font:800 clamp(30px,4.6vw,46px)/1 var(--font-cond);margin:4px 0 0;letter-spacing:-.005em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{margin:8px 0 0;color:var(--muted);max-width:70ch}
+.sub b{color:var(--fg);font-weight:600}
+.banner{display:inline-flex;gap:8px;align-items:center;font:700 13px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;background:var(--warn-soft);color:var(--warn);border:1px solid currentColor;border-radius:999px;padding:5px 12px;white-space:nowrap}
+.banner i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+/* grade */
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:start}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);min-width:0}
+.chd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+h2{font:700 19px/1.15 var(--font-cond);margin:0;letter-spacing:.01em}
+.tag{font:600 12px var(--font-cond);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.cap{margin:0 0 10px;color:var(--muted);font-size:13.5px}
+.note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+/* fluxo */
+.steps{list-style:none;margin:0 0 10px;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.steps li{position:relative;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:5px 6px 5px 8px;font:700 14px/1.1 var(--font-cond);letter-spacing:.02em}
+.steps li span{display:block;font:500 11.5px/1.2 var(--font-body);color:var(--muted);letter-spacing:0;margin-top:2px}
+.steps li.on{border-color:var(--accent);background:var(--accent-soft)}
+.drow{display:grid;grid-template-columns:92px minmax(0,1fr) 46px;gap:8px;align-items:center;padding:5px 0;border-top:1px solid var(--line)}
+.drow:first-child{border-top:0}
+.dlab{font:700 14px/1.05 var(--font-cond)}
+.dlab small{display:block;font:500 11.5px/1.15 var(--font-body);color:var(--muted)}
+.cells{display:flex;gap:4px;flex-wrap:wrap}
+.cell{width:38px;height:34px;border-radius:6px;border:1px solid transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;gap:2px;font:600 10px var(--font-cond);letter-spacing:.02em}
+.cell b{font:800 15px var(--font-cond)}
+.cell.s0{background:var(--v0);color:var(--v0t)} .cell.s1{background:var(--v1);color:var(--v1t)} .cell.s2{background:var(--v2);color:var(--v2t)} .cell.s3{background:var(--v3);color:var(--v3t)}
+.cell.na{background:repeating-linear-gradient(135deg,var(--surface2) 0 4px,var(--line) 4px 6px);color:var(--muted);border-color:var(--line)}
+.cell.pend{background:transparent;border:1.5px dashed var(--line);color:var(--muted)}
+.cell.cur{outline:2px solid var(--fx-alta);outline-offset:1px;animation:pulse 1.4s ease-in-out infinite}
+.cell.flag::after{content:'!';position:absolute;transform:translate(15px,-14px);background:var(--crit);color:#fff;border-radius:50%;width:13px;height:13px;font:800 10px/13px var(--font-cond);text-align:center}
+.cell{position:relative}
+@keyframes pulse{50%{outline-color:transparent}}
+@media (prefers-reduced-motion:reduce){.cell.cur{animation:none}}
+.dmean{font:800 18px var(--font-cond);text-align:right;font-variant-numeric:tabular-nums}
+.dmean.p{color:var(--muted)}
+.ivbox{display:flex;align-items:center;gap:14px;margin:10px 0 6px;padding:10px 12px;border-radius:10px;background:var(--surface2);border:1px solid var(--line)}
+.ivnum{font:800 44px/1 var(--font-cond);font-variant-numeric:tabular-nums;min-width:96px}
+.ivmeta{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ivmeta small{color:var(--muted);font-size:12.5px;line-height:1.3}
+.fx{display:inline-block;font:700 13px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 10px;color:#fff;background:var(--muted);width:max-content}
+.fx.baixa{background:var(--fx-baixa)} .fx.mod{background:var(--fx-mod)} .fx.alta{background:var(--fx-alta)} .fx.crit{background:var(--fx-crit)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .fx{color:#081130}}
+:root[data-theme="dark"] .fx{color:#081130}
+.scale{position:relative;margin:22px 0 4px;height:12px;display:grid;grid-template-columns:repeat(4,1fr);border-radius:6px;overflow:visible}
+.scale span{display:block;height:12px}
+.scale span:nth-child(1){background:var(--fx-baixa);border-radius:6px 0 0 6px}.scale span:nth-child(2){background:var(--fx-mod)}.scale span:nth-child(3){background:var(--fx-alta)}.scale span:nth-child(4){background:var(--fx-crit);border-radius:0 6px 6px 0}
+.scale .mk{position:absolute;top:-19px;transform:translateX(-50%);font:800 11px var(--font-cond);letter-spacing:.03em;white-space:nowrap;display:flex;flex-direction:column;align-items:center;transition:left .6s cubic-bezier(.2,.8,.2,1)}
+.scale .mk::after{content:'';width:2px;height:16px;background:var(--fg);margin-top:1px}
+.scale .mk.o{opacity:.55;top:15px;flex-direction:column-reverse}.scale .mk.o::after{height:9px;margin:0 0 1px}
+.sticks{display:flex;justify-content:space-between;font:600 11px var(--font-cond);color:var(--muted);margin-top:18px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin:10px 0 0;font-size:12px;color:var(--muted);align-items:center}
+.legend .cell{width:22px;height:18px;display:inline-flex}
+.legend .cell b{font-size:11px}
+.lnk{background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;text-underline-offset:2px;font-size:inherit;cursor:pointer}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btnrow button{font-size:13.5px;padding:7px 12px}
+/* ranking */
+.rank{width:100%;border-collapse:collapse;font-size:14px}
+.rank th{font:700 12px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
+.rank td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.rank tr:last-child td{border-bottom:0}
+.rank td.n{font:800 18px var(--font-cond);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.rank th.n{text-align:right}
+.rank .pos{font:800 16px var(--font-cond);color:var(--muted);width:22px}
+.rank .nm{font-weight:600}
+.rank .nm small{display:block;font-weight:400;color:var(--muted);font-size:12px;line-height:1.25}
+.rank tr.me td{background:var(--accent-soft)}
+.rank .nom{font-style:italic;color:var(--muted);font-size:13px}
+.rank .iet{display:inline-flex;align-items:center;gap:4px;font:600 11.5px var(--font-cond);letter-spacing:.03em;color:var(--muted);margin-top:2px}
+.rank .iet i,.tlg i{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid rgba(10,27,77,.4)}
+.tlg{display:flex;flex-wrap:wrap;gap:4px 12px;font:600 13px var(--font-cond);letter-spacing:.02em;margin:0 0 8px}
+.tlg span{display:inline-flex;align-items:center;gap:5px}
+.delta{font:700 12px var(--font-cond);margin-left:4px}
+.delta.up{color:var(--crit)}.delta.dn{color:var(--ok)}
+/* evidências */
+.ev{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.ev figure{margin:0;background:#fff;padding:4px 4px 6px;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.18);transform:rotate(-1.5deg)}
+.ev figure:nth-child(2n){transform:rotate(1.2deg)}
+.ev img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#ccd}
+.ev figcaption{font:700 11px/1.15 var(--font-cond);color:#0A1B4D;margin-top:4px;letter-spacing:.02em}
+.ev .empty{grid-column:1/-1;color:var(--muted);font-size:13px;border:1.5px dashed var(--line);border-radius:8px;padding:12px;text-align:center}
+.notes{margin:0;padding-left:1.1em;font-size:13px;color:var(--muted)}
+.notes li{margin:0 0 6px}
+.notes b{color:var(--fg);font-weight:600}
+/* jogo */
+.gamecard{padding:12px}
+.gamebox{position:relative;width:100%;height:clamp(420px,58vw,620px);border-radius:10px;overflow:hidden;background:#A9C8EE;border:1px solid var(--line);font-size:14.5px}
+.gamebox.full{position:fixed;inset:0;z-index:90;width:auto;height:auto;border-radius:0;border:0}
+#gl{display:block;width:100%;height:100%;touch-action:manipulation}
+.hud{position:absolute;left:8px;right:126px;top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start;pointer-events:none;z-index:3}
+.hud .m{background:rgba(255,255,255,.92);color:#0A1B4D;border-radius:7px;padding:4px 8px;font:600 12px/1.2 var(--font-cond);letter-spacing:.03em;text-transform:uppercase;min-width:84px;flex:1 1 84px;max-width:150px}
+.hud .m b{font-size:13.5px;float:right;margin-left:6px}
+.hud .m i{display:block;clear:both;height:5px;border-radius:3px;background:#d3dcef;margin-top:3px;overflow:hidden}
+.hud .m i b{display:block;height:100%;background:#1B46C2;width:50%;transition:width .5s;float:none;margin:0}
+.hud .m.low i b{background:#B3261E}
+.hud .credit{flex-basis:100%;font:600 10.5px var(--font-cond);letter-spacing:.06em;color:rgba(10,27,77,.75);text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.gtools{position:absolute;right:8px;top:8px;display:flex;gap:6px;z-index:6}
+.gtools button,.zoomctl button{min-width:34px;height:32px;padding:0 8px;font-weight:700;line-height:1;font-size:14px;background:rgba(255,255,255,.94);color:#0A1B4D;border:1px solid #C9D7F3;border-radius:7px}
+.zoomctl{position:absolute;right:8px;bottom:8px;display:flex;flex-direction:column;gap:6px;z-index:4}
+.zoomctl .zauto{font:700 11px var(--font-cond);letter-spacing:.05em}
+.gtools .gsala{font:700 11px var(--font-cond);letter-spacing:.05em}
+.gtools .gsala[aria-pressed="true"]{background:#1B46C2;color:#fff;border-color:#1B46C2}
+.hud{right:170px}
+.zoomctl .zauto[aria-pressed="false"]{opacity:.55;text-decoration:line-through}
+.dlg:not([hidden]) ~ .zoomctl{display:none}
+.obj{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 64px);background:rgba(255,255,255,.95);color:#0A1B4D;border-radius:9px;padding:8px 10px;font-size:13.5px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:3;box-shadow:0 4px 14px rgba(10,27,77,.18)}
+.obj b{font-family:var(--font-cond);font-size:15px;letter-spacing:.02em}
+.obj button{padding:6px 12px;font-size:13.5px;background:#1B46C2;border-color:#1B46C2;color:#fff;font-weight:600}
+.dlg{position:absolute;left:8px;right:8px;bottom:8px;max-height:min(66%,460px);background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow:auto;box-shadow:0 10px 34px rgba(10,27,77,.3);z-index:5;animation:dlgin .22s cubic-bezier(.2,.8,.2,1)}
+.dlg.full{top:46px;max-height:none}
+.dlg.center{top:46px;max-height:none;display:flex;flex-direction:column;justify-content:center}
+.dlg.center>*{max-width:640px;margin-left:auto;margin-right:auto;width:100%}
+.dlg.glass{--fg:#0A1B4D;--muted:#4A5E85;--line:#C9D7F3;--surface:#ffffff;--surface2:#F6F9FF;--accent:#1B46C2;--accent-soft:#DCE6FA;background:rgba(255,255,255,.94);color:#0A1B4D;border-color:rgba(201,215,243,.9)}
+:root .dlg.glass button{background:#fff;color:#0A1B4D;border-color:#C9D7F3}
+:root .dlg.glass button.pri{background:#1B46C2;border-color:#1B46C2;color:#fff}
+@keyframes dlgin{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.dlg{animation:none}}
+.dlg p{margin:0 0 10px}
+.dlg h3{margin:0 0 6px;font:800 24px/1.1 var(--font-cond)}
+.dlg .k{font:700 12px var(--font-cond);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:2px;display:block}
+.dlg.glass .k{color:#1B46C2}
+.npc{display:flex;gap:10px;align-items:flex-start;margin:0 0 8px}
+.npc .av{flex:0 0 38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 15px var(--font-cond);color:#fff}
+.npc .tx{min-width:0}
+.npcn{display:block;font:700 13px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:1px}
+.npc p{margin:0}
+.chs{display:grid;gap:8px;margin-top:8px}
+.chs.row{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.ch{text-align:left;line-height:1.35}
+.ch small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.res{background:var(--accent-soft);border-radius:9px;padding:8px 11px;margin:0 0 10px;font-size:14px}
+.res.good{background:var(--ok-soft)} .res.bad{background:var(--crit-soft)} .res.warn{background:var(--warn-soft)}
+.math{font:600 15px var(--font-cond);letter-spacing:.02em;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:0 0 10px;font-variant-numeric:tabular-nums}
+.math s{color:var(--crit)}
+/* régua de pontuação (UI) */
+.ihead{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px}
+.ihead .code{font:800 20px var(--font-cond);color:var(--accent)}
+.ihead .nm{font:700 20px var(--font-cond)}
+.ihead .sn{font:600 11.5px var(--font-cond);letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
+.idef{font-size:13.5px;color:var(--muted);margin:0 0 4px}
+.ruler{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:10px 0 6px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.ruler button{border:0;border-radius:0;padding:28px 6px 10px;text-align:center;position:relative;line-height:1.2;font-size:12.5px;min-height:96px}
+.ruler button+button{border-left:1px solid rgba(255,255,255,.35)}
+.ruler button b{display:block;font:800 26px/1 var(--font-cond);margin-bottom:4px}
+.ruler button::before{content:'';position:absolute;top:0;left:0;right:0;height:16px;background:repeating-linear-gradient(90deg,currentColor 0 1.5px,transparent 1.5px 10%);opacity:.45}
+.ruler .r0{background:var(--v0);color:var(--v0t)}.ruler .r1{background:var(--v1);color:var(--v1t)}.ruler .r2{background:var(--v2);color:var(--v2t)}.ruler .r3{background:var(--v3);color:var(--v3t)}
+.ruler button:hover{filter:brightness(1.08);border-color:transparent}
+.ruler button.pick{box-shadow:inset 0 0 0 3px var(--fx-alta)}
+.ruler button.gab{box-shadow:inset 0 0 0 3px var(--ok)}
+.ruler[aria-disabled="true"] button{cursor:default}
+.nr{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.nr button{font-size:13px;padding:6px 10px}
+.pola{margin:4px auto 10px;background:#fff;padding:8px 8px 10px;border-radius:4px;box-shadow:0 4px 14px rgba(0,0,0,.22);transform:rotate(-1.6deg);max-width:320px;animation:pola .5s cubic-bezier(.2,.8,.2,1)}
+.pola img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#dde}
+.pola figcaption{font:700 13px/1.2 var(--font-cond);color:#0A1B4D;margin-top:6px;letter-spacing:.02em}
+.pola figcaption small{display:block;font:500 12px var(--font-body);color:#4A5E85}
+@keyframes pola{from{transform:rotate(-8deg) translateY(30px) scale(.9);opacity:0}to{transform:rotate(-1.6deg);opacity:1}}
+.twocol{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+@media (max-width:620px){.twocol{grid-template-columns:minmax(0,1fr)}}
+.fichas{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:6px 0 8px}
+.ficha{border:1px solid var(--line);border-radius:9px;padding:9px 10px;background:var(--surface2);text-align:left;font-size:13px;line-height:1.35}
+.ficha b{display:block;font:800 17px var(--font-cond)}
+.ficha .rg{font:600 11px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.ficha q{display:block;font-style:italic;quotes:none}
+.ficha.sel{border-color:var(--accent);background:var(--accent-soft)}
+.ficha .ord{float:right;font:800 20px var(--font-cond);color:var(--accent)}
+.cmp{width:100%;border-collapse:collapse;font-size:13.5px;margin:4px 0 10px}
+.cmp th,.cmp td{border-bottom:1px solid var(--line);padding:6px 7px;text-align:left;vertical-align:top}
+.cmp th{font:700 12px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cmp td:first-child{font-weight:600;width:30%}
+.dlg.glass .cmp th,.dlg.glass .cmp td{border-color:#C9D7F3}
+.dlg.glass .cmp th{color:#4A5E85}
+.alist{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:6px}
+.alist li{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;padding:7px 9px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);animation:dlgin .3s both}
+.alist li .st{flex:0 0 auto;font:800 12px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:5px;color:#fff;margin-top:1px}
+.alist li .st.ok{background:var(--ok)} .alist li .st.gl{background:var(--crit)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .alist li .st{color:#081130}}
+.budget{width:100%;border-collapse:collapse;font-size:13px;min-width:540px}
+.budget th,.budget td{border-bottom:1px solid var(--line);padding:5px 5px;text-align:left;vertical-align:middle}
+.budget th{font:700 12px var(--font-cond);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.budget th.a{text-align:center}
+.budget td.cname{line-height:1.25}
+.budget td.cname b{display:block;font-size:13.5px}
+.budget td.cname small{color:var(--muted)}
+.budget td.cost{font:700 14px var(--font-cond);white-space:nowrap}
+.budget td.c{text-align:center;padding:4px 3px}
+.budget .bt{width:100%;min-width:64px;padding:6px 4px;font:700 13px var(--font-cond);letter-spacing:.02em;border-radius:7px}
+.budget .bt[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .budget .bt[aria-pressed="true"]{color:#081130}}
+.budget .bt.nil{color:var(--muted);font-weight:500;font-family:var(--font-body);font-size:11.5px}
+.bscroll{overflow-x:auto;margin:6px 0 8px}
+.bbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font:700 15px var(--font-cond);margin:4px 0 6px}
+.bbar .meter{flex:1 1 160px;height:9px;border-radius:5px;background:var(--line);overflow:hidden}
+.bbar .meter b{display:block;height:100%;background:var(--accent);transition:width .3s}
+.bbar .meter b.over{background:var(--crit)}
+.proj{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin:6px 0 8px}
+.proj div{border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:12.5px;background:var(--surface2)}
+.proj b{display:block;font:800 16px var(--font-cond)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin:8px 0 10px;font-size:13px}
+.sum span{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:6px 9px;line-height:1.25}
+.sum span b{display:block;font:800 19px var(--font-cond)}
+.title-badge{display:inline-block;font:800 22px var(--font-cond);letter-spacing:.02em;background:linear-gradient(135deg,#1B46C2,#00949A);color:#fff;border-radius:10px;padding:6px 14px;margin:2px 0 8px}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:7;transition:opacity .45s}
+.flash.on{opacity:.9;transition:none}
+.toast{position:absolute;left:50%;top:74px;transform:translateX(-50%);background:rgba(10,27,77,.94);color:#fff;padding:6px 14px;border-radius:16px;font-size:13.5px;pointer-events:none;z-index:8;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 16px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;color:#0A1B4D}
+/* modais */
+.rmodal{position:fixed;inset:0;z-index:120;background:rgba(8,17,48,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;animation:rfade .18s ease}
+.rbox{width:min(760px,100%);max-height:min(720px,calc(100vh - 32px));display:flex;flex-direction:column;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;animation:rpop .22s cubic-bezier(.2,.8,.2,1)}
+.rbox.wide{width:min(1040px,100%)}
+@keyframes rfade{from{opacity:0}to{opacity:1}} @keyframes rpop{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.rmodal,.rbox{animation:none}}
+.rhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:16px 20px 8px}
+.rhead h2{font-size:24px;margin:2px 0 0}
+.rx{border:0;background:transparent;font-size:18px;line-height:1;padding:8px 10px;border-radius:8px;color:var(--muted)}
+.rx:hover{background:var(--accent-soft);color:var(--fg)}
+.rtabs{display:flex;gap:6px;padding:3px 20px 12px;align-items:center;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
+.rtabs::-webkit-scrollbar{display:none}
+.rtabs button{flex:0 0 auto;border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 12px;font-size:13px;color:var(--muted)}
+.rtabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .rtabs button[aria-selected="true"]{color:#081130}}
+.rbody{padding:16px 20px;overflow:auto;flex:1;font-size:14.5px}
+.rpane p{margin:0 0 12px}
+.rpane h3{font:700 16px var(--font-cond);letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin:16px 0 6px}
+.rpane h3:first-child{margin-top:0}
+.rlist{margin:0 0 12px;padding-left:1.1em}.rlist li{margin:0 0 8px}
+.rnote{font-size:13px;color:var(--muted)}
+kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--bg);white-space:nowrap}
+.rfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.rhead,.rtabs,.rfoot{flex-shrink:0}
+.rtw{overflow-x:auto}
+.rtab{border-collapse:collapse;width:100%;font-size:13px;min-width:760px}
+.rtab th,.rtab td{border-bottom:1px solid var(--line);padding:8px 8px;text-align:left;vertical-align:top}
+.rtab th{font:700 12px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);position:sticky;top:0;background:var(--surface)}
+.rtab td.c{font:800 15px var(--font-cond);color:var(--accent);white-space:nowrap}
+.rtab td.n{font-weight:600;min-width:120px}
+.rtab ol{margin:0;padding:0;list-style:none}
+.rtab ol li{margin:0 0 3px;white-space:normal}
+.rtab ol li b{display:inline-block;width:18px;height:18px;border-radius:4px;text-align:center;font:800 12px/18px var(--font-cond);margin-right:5px}
+.rtab ol li:nth-child(1) b{background:var(--v0);color:var(--v0t)}.rtab ol li:nth-child(2) b{background:var(--v1);color:var(--v1t)}.rtab ol li:nth-child(3) b{background:var(--v2);color:var(--v2t)}.rtab ol li:nth-child(4) b{background:var(--v3);color:var(--v3t)}
+.rtab tr.gh td{background:var(--accent-soft);font:700 13px var(--font-cond);letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.rtab tr.hl td{background:var(--warn-soft)}
+.sn2{font:600 11px var(--font-cond);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.foot{font-size:12.5px;color:var(--muted);max-width:100ch;margin:0}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr)}.gamecol{order:-1}}
+@media (max-width:620px){.gamebox{height:clamp(470px,128vw,600px)}.dlg{max-height:78%}}
+@media (max-width:520px){.hud{right:166px}.hud .m{min-width:68px;padding:3px 6px;font-size:11px}.hud .m b{font-size:12px}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.drow{grid-template-columns:70px minmax(0,1fr) 40px}.cell{width:33px}.ivnum{font-size:38px;min-width:80px}.ruler button{font-size:11.5px;padding:24px 3px 8px;min-height:88px}.dlg{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="kick">IVSH · Gerência Metropolitana de Fortaleza · jogo educativo</div>
+      <h1>A Régua <em>das Águas</em></h1>
+      <p class="sub">Um RPG 3D sobre transformar o que se vê no açude em nota auditável. Gamificação da proposta <b>“Índice de Vulnerabilidade Socioambiental de Sistemas Hídricos (IVSH) para a Gerência Metropolitana de Fortaleza”</b>.</p>
+    </div>
+    <span class="banner" title="Esta é a primeira de duas entregas"><i></i>Prévia · entrega 1 de 2 · açudes e dados fictícios</span>
+  </header>
+
+  <div class="grid">
+    <div class="col">
+      <section class="card" aria-labelledby="h-flow">
+        <div class="chd"><h2 id="h-flow">Do campo ao índice</h2><span class="tag" id="flowtag">Açude Jandaia · fictício</span></div>
+        <ol class="steps" id="steps">
+          <li data-s="0">1 · Indicador<span>nota 0–3 com evidência</span></li>
+          <li data-s="1">2 · Dimensão<span>média dos itens válidos</span></li>
+          <li data-s="2">3 · IVSH<span>média das 4, pesos iguais</span></li>
+          <li data-s="3">4 · Faixa<span>baixa a crítica</span></li>
+        </ol>
+        <div id="flowgrid" aria-live="polite"></div>
+        <div class="ivbox"><div class="ivnum" id="ivnum">—</div><div class="ivmeta"><span class="fx" id="ivfx">aguardando</span><small id="ivnote">A ficha do Jandaia começa na campanha de campo.</small></div></div>
+        <div class="scale" id="scale" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <div class="sticks" aria-hidden="true"><span>0</span><span>0,75</span><span>1,50</span><span>2,25</span><span>3</span></div>
+        <div class="legend"><span class="cell s0"><b>0</b></span>mais favorável <span class="cell s3"><b>3</b></span>mais vulnerável <span class="cell na"></span>sem registro (fora da média) <span class="cell pend"></span>pendente</div>
+        <div class="btnrow"><button type="button" id="openregua">Régua completa (18 indicadores)</button><button type="button" id="openrules2">Regras do jogo</button></div>
+      </section>
+
+      <section class="card" aria-labelledby="h-rank">
+        <div class="chd"><h2 id="h-rank">Ranking de vulnerabilidade</h2><span class="tag" id="ranktag">fichas nominais</span></div>
+        <div id="rank"></div>
+        <p class="note">Faixas por <b>intervalos iguais</b> da escala 0–3. É uma convenção do jogo: a apresentação do artigo nomeia as quatro faixas, mas não traz os pontos de corte. O IET de cada açude também é fictício: trofia e vulnerabilidade medem coisas diferentes, e a ordem de uma não precisa ser a da outra.</p>
+      </section>
+
+      <section class="card" aria-labelledby="h-ev">
+        <div class="chd"><h2 id="h-ev">Evidências da campanha</h2><span class="tag" id="evtag">0 fotos</span></div>
+        <div class="ev" id="ev"><div class="empty">As fotos tiradas em campo aparecem aqui. Foto é evidência mínima em vários indicadores.</div></div>
+      </section>
+
+      <section class="card" aria-labelledby="h-notes">
+        <div class="chd"><h2 id="h-notes">O que é do artigo e o que é do jogo</h2></div>
+        <ul class="notes">
+          <li><b>Do artigo:</b> 4 dimensões, 18 indicadores, escala 0–3, evidência mínima, regra de ausência, mecanismo principal, média dos itens válidos e pesos iguais.</li>
+          <li><b>Do jogo:</b> açudes, pessoas, fotos e notas são fictícios; os cortes das faixas e os efeitos das intervenções no orçamento são convenções ilustrativas.</li>
+          <li>O índice é uma proposta, ainda não aplicada nem validada. O jogo não descreve a situação real de nenhum açude.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="col gamecol">
+      <section class="card gamecard" aria-labelledby="h-game">
+        <div class="chd"><h2 id="h-game">Campanha de campo (RPG 3D)</h2><span class="tag">clique no chão para andar · “Ir até lá” leva ao próximo caso</span></div>
+        <div class="gamebox" id="gamebox">
+          <canvas id="gl" aria-label="Cena 3D do açude Jandaia (fictício)"></canvas>
+          <div class="loading" id="gload">carregando o açude…</div>
+          <div class="hud" id="hud" hidden></div>
+          <div class="obj" id="obj" hidden></div>
+          <div class="gtools"><button type="button" id="gsala" class="gsala" aria-pressed="false" title="Modo sala de aula: sem música, efeitos baixos">SALA</button><button type="button" id="grules" title="Regras do jogo" aria-label="Regras do jogo">?</button><button type="button" id="gsound" aria-pressed="true" title="Desligar o som" aria-label="Som">🔊</button><button type="button" id="gfull" title="Ampliar" aria-label="Ampliar">⛶</button></div>
+          <div class="flash" id="flash"></div>
+          <div class="dlg center" id="dlg" hidden></div>
+          <div class="zoomctl" aria-label="Zoom da câmera"><button type="button" id="zin" title="Aproximar" aria-label="Aproximar">+</button><button type="button" id="zout" title="Afastar" aria-label="Afastar">−</button><button type="button" id="zmap" title="Ver o mapa todo" aria-label="Ver o mapa todo">⤢</button><button type="button" id="zauto" class="zauto" aria-pressed="true" title="Zoom automático ao chegar nos casos: ligado">AUTO</button></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <p class="foot">Base: apresentação “Proposta de um Índice de Vulnerabilidade Socioambiental de Sistemas Hídricos (IVSH) para a Gerência Metropolitana de Fortaleza”, Sosthenis e Ana, UFC · FEAAC · PPAC-PROF. Índice proposto, não aplicado nesta etapa. RMQA e IET são da COGERH e aparecem aqui de forma ilustrativa. Simulação educativa: nenhum dado aqui descreve açudes reais. <a href="vr.html">Demo de realidade virtual</a> (óculos, celular em 360° ou computador).</p>
+</div>
+
+<!-- Régua completa -->
+<div class="rmodal" id="regua" hidden role="dialog" aria-modal="true" aria-labelledby="reguat">
+  <div class="rbox wide">
+    <div class="rhead">
+      <div><span class="kick">Régua de pontuação do IVSH</span><h2 id="reguat">Os 18 indicadores</h2></div>
+      <button type="button" class="rx" id="regx" aria-label="Fechar régua">✕</button>
+    </div>
+    <nav class="rtabs" role="tablist" aria-label="Filtrar por dimensão" id="regtabs">
+      <button type="button" role="tab" data-d="all" aria-selected="true">Todos</button>
+      <button type="button" role="tab" data-d="D1" aria-selected="false">D1 · Proteção física</button>
+      <button type="button" role="tab" data-d="D2" aria-selected="false">D2 · Pressão antrópica</button>
+      <button type="button" role="tab" data-d="D3" aria-selected="false">D3 · Governança</button>
+      <button type="button" role="tab" data-d="D4" aria-selected="false">D4 · Conflito de uso</button>
+    </nav>
+    <div class="rbody"><div class="rtw"><table class="rtab"><thead><tr><th>Código</th><th>Indicador</th><th>Definição operacional</th><th>Evidência mínima</th><th>Escala 0–3</th><th>Sentido</th></tr></thead><tbody id="regbody"></tbody></table></div></div>
+    <div class="rfoot"><span>Escala ordinal: 0 = condição mais favorável, 3 = mais vulnerável, em todos os indicadores. “Inverso” = item protetivo; a escala já o alinha ao mesmo sentido.</span><span>Fonte: apresentação do artigo (quadro da equipe).</span></div>
+  </div>
+</div>
+
+<!-- Regras do jogo -->
+<div class="rmodal" id="rules" hidden role="dialog" aria-modal="true" aria-labelledby="rulest">
+  <div class="rbox">
+    <div class="rhead">
+      <div><span class="kick">A Régua das Águas</span><h2 id="rulest">Regras do jogo</h2></div>
+      <button type="button" class="rx" id="rclose" aria-label="Fechar regras">✕</button>
+    </div>
+    <nav class="rtabs" role="tablist" aria-label="Seções das regras">
+      <button type="button" role="tab" data-t="r1" aria-selected="true">Visão geral</button>
+      <button type="button" role="tab" data-t="r2" aria-selected="false">Controles</button>
+      <button type="button" role="tab" data-t="r3" aria-selected="false">Os casos</button>
+      <button type="button" role="tab" data-t="r4" aria-selected="false">Mesa da Controladoria</button>
+      <button type="button" role="tab" data-t="r5" aria-selected="false">Pontuação</button>
+      <button type="button" role="tab" data-t="r6" aria-selected="false">O artigo</button>
+    </nav>
+    <div class="rbody">
+      <section class="rpane" id="r1">
+        <p>Você é aplicador(a) do IVSH e vai fazer a primeira campanha com a régua no <b>Açude Jandaia</b> (fictício). O jogo tem quatro momentos:</p>
+        <ol class="rlist">
+          <li><b>Abertura.</b> Do alto, a rede de qualidade da água da COGERH (RMQA) e o IET, que ela já calcula. Ao descer até o açude, a pergunta do IVSH.</li>
+          <li><b>Mundo sem régua.</b> Três fichas antigas, escritas cada uma de um jeito. Ordenar os açudes vira questão de opinião, até a régua aparecer.</li>
+          <li><b>Campanha de campo.</b> Cinco casos, cada um ensinando uma regra do índice. Os outros 13 indicadores já estão registrados em fichas espalhadas pelo mapa.</li>
+          <li><b>Mesa da Controladoria.</b> A auditoria confere as fichas, o ranking pode mudar e você distribui um orçamento entre os quatro açudes.</li>
+        </ol>
+        <p class="rnote">Açudes, pessoas, fotos e notas são fictícios. Esta é a entrega 1 de 2.</p>
+      </section>
+      <section class="rpane" id="r2" hidden>
+        <ul class="rlist">
+          <li><b>Andar:</b> clique ou toque no chão. O botão <b>Ir até lá</b> leva ao próximo caso, marcado pelo farol amarelo.</li>
+          <li><b>Fichas no mapa:</b> clique nos marcadores azuis com código (por exemplo, D1.3) para ler o registro já feito.</li>
+          <li><b>Câmera:</b> <kbd>+</kbd> e <kbd>−</kbd> aproximam e afastam; <kbd>⤢</kbd> mostra o mapa todo; <b>AUTO</b> liga ou desliga a aproximação ao chegar nos casos. Em tela cheia, ou com <kbd>Ctrl</kbd>, a rodinha do mouse também dá zoom.</li>
+          <li><b>Tela cheia:</b> <kbd>⛶</kbd>; <kbd>Esc</kbd> sai. O som tem botão próprio e fica salvo neste navegador.</li>
+          <li><b>Painel ao lado:</b> mostra a ficha do Jandaia se formando, do indicador à faixa. Clique numa célula para ver a régua daquele indicador.</li>
+        </ul>
+      </section>
+      <section class="rpane" id="r3" hidden>
+        <ol class="rlist">
+          <li><b>A régua</b> (D1.1, mata ciliar): fotografar e converter a observação em nota pelo descritor.</li>
+          <li><b>Evidência mínima</b> (D2.5, resíduos): um relato não é evidência. Registrar só com o relato custa caro na auditoria.</li>
+          <li><b>Regra de ausência</b> (D3.1, comissão gestora): sem a evidência mínima, o item fica fora da média. Não vira zero nem três.</li>
+          <li><b>Mecanismo principal</b> (D2.3 × D1.2): um mesmo fato entra em um só indicador, para não haver dupla contagem.</li>
+          <li><b>Concordância</b> (D2.1, balneários): dois aplicadores pontuam o mesmo ponto sem combinar. A discordância se resolve pelo descritor, não por quem fala mais alto.</li>
+        </ol>
+        <p class="rnote">Nos casos de julgamento (1 e 5), a calibração acontece na hora. Nos casos de regra (2, 3 e 4), o veredito vem na auditoria.</p>
+      </section>
+      <section class="rpane" id="r4" hidden>
+        <p>A Dra. Rastro audita as quatro fichas com três perguntas: há evidência mínima? A regra de ausência foi respeitada? Algum fato foi contado duas vezes? Nota sem evidência é <b>glosada</b> e sai da média.</p>
+        <p>Depois, você distribui <b>R$ 1,2 milhão</b> entre ações que reduzem um ponto em indicadores específicos. A tabela mostra quanto cada ação reduziria o IVSH de cada açude. Ação sobre indicador “sem registro” não tem efeito mensurável: é preciso registrar a evidência primeiro.</p>
+        <p class="rnote">Custos e efeitos são ilustrativos, criados para o jogo.</p>
+      </section>
+      <section class="rpane" id="r5" hidden>
+        <ul class="rlist">
+          <li><b>Rastreabilidade:</b> sobe quando a nota tem evidência registrada; cai com nota sem lastro.</li>
+          <li><b>Régua:</b> porcentagem de decisões que seguiram a régua de primeira.</li>
+          <li><b>Controle social:</b> sobe quando a decisão pode ser explicada à comunidade com critério e evidência.</li>
+          <li><b>XP:</b> acertos nos casos, auditoria sem glosa e a redução ponderada de vulnerabilidade comprada com o orçamento (ação em açude de faixa crítica vale mais).</li>
+        </ul>
+        <p>Títulos finais: <b>Régua de Ouro</b>, <b>Aplicador(a) Rastreável</b> ou <b>Aprendiz do Achismo</b>.</p>
+      </section>
+      <section class="rpane" id="r6" hidden>
+        <p>O artigo propõe o IVSH para a Gerência Metropolitana de Fortaleza (Bacias Metropolitanas, 22 açudes). A lacuna apontada é de <b>padronização, não de coleta</b>: os dados já existem nas fichas de campo, mas são registrados em escala nominal, cada regional do seu jeito.</p>
+        <p>A contribuição central é a <b>régua de conversão explícita</b>: cada observação de campo vira nota 0–3 por regra escrita, com definição operacional, evidência mínima e regra de ausência. O índice é composto e formativo (Nardo et al., OECD/JRC), com agregação linear e pesos iguais no cenário-base, e pensado para acoplar à coleta trimestral da RMQA.</p>
+        <p>O IVSH não substitui o que a COGERH já mede. O IET, classificado a cada trimestre com as campanhas da RMQA, olha a água; o IVSH olha o reservatório e o entorno, incluindo governança e conflito de uso. O artigo prevê, como pesquisa futura, correlacionar os dois.</p>
+        <p>Segundo o artigo, entre os índices consultados (o ISH da ANA, o IVS-Ipea e o Water Poverty Index, de Sullivan, 2002), nenhum mede governança local e conflito de uso no nível do reservatório. O Water Poverty Index é também uma das bases teóricas das quatro dimensões.</p>
+        <p class="rnote">Autoria: Sosthenis e Ana, UFC · FEAAC · PPAC-PROF. Limitações declaradas: índice ainda não aplicado nem validado empiricamente; escopo restrito à Gerência Metropolitana; corpus histórico limitado.</p>
+      </section>
+    </div>
+    <div class="rfoot"><span>design by @sosthenislima</span><button type="button" class="pri" id="rplay">Jogar</button></div>
+  </div>
+</div>
+
+<!--__THREE__-->
+<!--__APP__-->
+</body>
+</html>
