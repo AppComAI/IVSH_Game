@@ -5,7 +5,10 @@ RPG 3D educativo sobre o **IVSH** (Índice de Vulnerabilidade Socioambiental de 
 - **Jogar:** `index.html` (jogo completo: abertura com a rede de qualidade da água, mundo sem régua, campanha de campo com 5 casos e Mesa da Controladoria).
 - **Realidade virtual:** `vr.html` (demo de 3 a 5 minutos: óculos com WebXR, como o Meta Quest; celular em modo 360°; ou computador).
 
-Os dois arquivos são independentes, não precisam de internet (three.js e fontes vão embutidos) e devem ficar na mesma pasta, porque um tem link para o outro.
+- **Modo Escola (piloto):** botão “Modo Escola” na abertura do `index.html`. Uma fase completa para crianças de 8 a 12 anos, no açude de treino: garça-guia, régua com carinhas, 6 pistas com foto, plano de cuidado com 8 gotas em que a cena muda e selo final.
+- **Votação por QR code:** botão 🗳 no jogo. Cada pessoa vota no próprio celular em `votar.html` (rodada 1: entendi? rodada 2: o que melhorar?). Precisa ligar uma planilha: veja [`votacao/LEIAME.md`](votacao/LEIAME.md).
+
+`index.html` e `vr.html` são independentes e não precisam de internet para jogar (three.js e fontes vão embutidos); devem ficar na mesma pasta porque um tem link para o outro. **A votação precisa de internet** (celulares e planilha). `config.js` guarda o endereço da planilha e pode ser editado sem rodar o build.
 
 ## Narração das boas-vindas
 
@@ -24,11 +27,11 @@ Settings → Pages → Build and deployment → *Deploy from a branch* → `main
 
 ## Editar e gerar os arquivos
 
-O código-fonte fica em `src/` (`page.html`, `vr-page.html`, `fonts.css` e `src/app/*.js`). Para gerar `index.html` e `vr.html` de novo:
+O código-fonte fica em `src/` (`page.html`, `vr-page.html`, `votar-page.html`, `fonts.css` e `src/app/*.js`). Para gerar `index.html`, `vr.html` e `votar.html` de novo:
 
 ```bash
-npm install        # baixa o three.js 0.150.0
-python3 build.py   # gera index.html e vr.html na raiz
+npm install        # baixa three.js 0.150.0 e qrcode-generator
+python3 build.py   # gera index.html, vr.html e votar.html na raiz
 ```
 
 Parâmetro de teste: `?q=lo` força qualidade baixa (sem sombras); `?q=hi` impede a redução automática.
@@ -38,6 +41,7 @@ Parâmetro de teste: `?q=lo` força qualidade baixa (sem sombras); `?q=hi` imped
 - Base: apresentação “Proposta de um Índice de Vulnerabilidade Socioambiental de Sistemas Hídricos (IVSH) para a Gerência Metropolitana de Fortaleza”, Sosthenis e Ana, UFC · FEAAC · PPAC-PROF.
 - Design: @sosthenislima.
 - [three.js](https://threejs.org) r150, licença MIT (aviso de licença mantido no arquivo).
+- [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 (Kazuhiko Arase), licença MIT (aviso mantido no arquivo).
 - Fontes Barlow e Barlow Condensed, de Jeremy Tribby, licença SIL Open Font License 1.1.
 
 Licença deste projeto: a definir.

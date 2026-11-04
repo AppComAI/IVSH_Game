@@ -91,6 +91,9 @@ var SFX=(function(){
     bad:function(){ if(ready()){ var t=ctx.currentTime; tone(330,t,0.35,{type:'sawtooth',vol:0.12,lp:900,to:220}); tone(247,t+0.18,0.45,{type:'sawtooth',vol:0.12,lp:900,to:160}); } },
     shutter:function(){ if(ready()){ var t=ctx.currentTime; noise(t,0.04,{ft:'highpass',f:3000,vol:0.5}); noise(t+0.07,0.09,{ft:'bandpass',f:1800,q:2,vol:0.4}); tone(1900,t+0.16,0.05,{type:'square',vol:0.05}); } },
     stamp:function(){ if(ready()){ var t=ctx.currentTime; tone(120,t,0.25,{type:'sine',vol:0.5,to:60}); noise(t,0.12,{ft:'lowpass',f:700,vol:0.5}); } },
+    gota:function(){ if(ready()){ var t=ctx.currentTime; tone(1100,t,0.14,{type:'sine',vol:0.22,to:420}); tone(1650,t+0.05,0.1,{type:'sine',vol:0.08,to:700}); } },
+    brilho:function(){ if(ready()){ var t=ctx.currentTime; [1568,1976,2349,3136].forEach(function(f,i){ tone(f,t+i*0.06,0.18,{type:'sine',vol:0.07}); }); } },
+    garca:function(){ if(ready()){ var t=ctx.currentTime; tone(420,t,0.22,{type:'sawtooth',vol:0.06,lp:1400,to:300}); tone(380,t+0.2,0.26,{type:'sawtooth',vol:0.05,lp:1200,to:240}); } },
     coin:function(){ if(ready()){ var t=ctx.currentTime; tone(1318,t,0.09,{type:'square',vol:0.06,lp:4000}); tone(1760,t+0.07,0.16,{type:'square',vol:0.06,lp:4000}); } },
     regua:function(){ if(ready()){ var t=ctx.currentTime; tone(hz(43),t,3.2,{type:'triangle',vol:0.18,att:0.4,lp:400}); tone(hz(55),t,3.2,{type:'sine',vol:0.08,att:0.6}); noise(t,2.6,{ft:'highpass',f:5000,vol:0.07}); [0,4,7,12,16,19,24].forEach(function(n,i){ tone(hz(79+n),t+1.9+i*0.06,0.8,{type:'sine',vol:0.05}); }); } playMot('regua',0.2); },
     whoosh:function(){ if(ready()){ var t=ctx.currentTime; var s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=noiseBuf; f.type='bandpass'; f.Q.value=1.2; f.frequency.setValueAtTime(300,t); f.frequency.exponentialRampToValueAtTime(2400,t+1.4); f.frequency.exponentialRampToValueAtTime(400,t+2.6);

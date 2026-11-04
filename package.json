@@ -4,5 +4,5 @@
   "private": true,
   "description": "A Régua das Águas: RPG 3D educativo sobre o IVSH (entrega 1 de 2).",
   "scripts": { "build": "python3 build.py" },
-  "dependencies": { "three": "0.150.0" }
+  "dependencies": { "three": "0.150.0", "qrcode-generator": "1.4.4" }
 }

@@ -81,8 +81,9 @@ canvas.addEventListener('pointerdown',function(e){
   if((CAM.path||CAM.cine)&&dlg.hidden){ CAM.skip(); return; }
   if(G.mode!=='explore') return;
   var r=this.getBoundingClientRect(); ndc.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(ndc,camera);
-  var hits=ray.intersectObjects(pickables.filter(function(o){ var k=o.userData.kind; return k==='case'||(k==='regua'?regua.visible&&regua.position.y>-1:o.visible); }),false);
+  var hits=ray.intersectObjects(pickables.filter(function(o){ var k=o.userData.kind; return k==='case'||(k==='pista'?o.parent.visible:(k==='regua'?regua.visible&&regua.position.y>-1:o.visible)); }),false);
   for(var i=0;i<hits.length;i++){ var u=hits[i].object.userData;
+    if(u.kind==='pista'){ kidsClickPista(u.i); return; }
     if(u.kind==='ficha'){ openFicha(u.code); return; }
     if(u.kind==='regua'){ SFX.reguaNote(u.i); toast('Faixa '+u.i+' da régua'+(u.i===0?': condição mais favorável':(u.i===3?': condição mais vulnerável':''))); return; }
     if(u.kind==='case'){ if(u.i!==G.caseI&&G.caseI<CASES.length) toast('Primeiro o caso '+(G.caseI+1)+': '+CASES[G.caseI].t); var q=CASES[u.i].p; walkTo(q.x,q.z,true); return; } }

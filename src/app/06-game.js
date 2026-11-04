@@ -36,7 +36,7 @@ function intro(){
   G.mode='title'; hud.hidden=true; objEl.hidden=true; CAM.orbit=true; otto.visible=true; otto.material.opacity=1; serras.visible=false; scene.fog.near=600; scene.fog.far=1400;
   $('gload').hidden=true;
   panel('<span class="k">RPG 3D · IVSH · entrega 1 de 2</span><h3>A Régua das Águas</h3><p>Você é aplicador(a) do <b>IVSH</b>, o índice proposto para medir a vulnerabilidade socioambiental dos açudes da Gerência Metropolitana de Fortaleza.</p><p>Missão: fazer a primeira campanha com a régua no <b>Açude Jandaia</b> e levar a ficha à <b>Mesa da Controladoria</b>, onde ela vira decisão de orçamento.</p><p class="note">Açudes, pessoas, fotos e notas são fictícios. As regras do índice vêm do artigo.</p>'+
-    chs([['Começar',startGame,true],['❔ Regras do jogo',function(){ openRules(); }]],true),'glass');
+    chs([['Começar',startGame,true],['🌿 Modo Escola (piloto)',startKids],['❔ Regras do jogo',function(){ openRules(); }]],true),'glass');
 }
 HOOK.play=function(){ if(G.mode==='title') startGame(); };
 function startGame(){ SFX.start(); SFX.scene('abertura'); resetState(); renderDash(); setHud(); abertura1(); }

@@ -69,20 +69,21 @@ sang.add(mesh(new T.BoxGeometry(2.2,0.08,4.2),mat(0xBFC4C9),0,0.04,0)); sang.add
 scene.add(sang);
 
 /* ---- vegetação da caatinga ---- */
+var TREES=[], TRASH=[], DUNG=[], EROS=[];
 var trunkM=mat(0x7a5a3a), juaM=mat(0x3E7A3C), juaM2=mat(0x4C8A45), manM=mat(0x5B8C4E), carT=mat(0x8A7358), carL=mat(0x6E9A54), dryM=mat(0x9A8F6A), dryM2=mat(0x8a7f5e);
 function juazeiro(x,z,s){ s=s||1; var g=new T.Group(); g.position.set(x,0,z); g.scale.setScalar(s);
   g.add(mesh(new T.CylinderGeometry(.16,.24,1.3,7),trunkM,0,.65,0));
   [[0,1.75,0,1.05],[.6,1.55,.25,.75],[-.55,1.6,-.2,.8],[.1,2.15,-.1,.7]].forEach(function(p,i){ var m=mesh(new T.IcosahedronGeometry(p[3],1),i%2?juaM2:juaM,p[0],p[1],p[2]); m.scale.y=.75; g.add(m); });
-  scene.add(g); return g; }
+  scene.add(g); TREES.push(g); return g; }
 function mandacaru(x,z,s){ s=s||1; var g=new T.Group(); g.position.set(x,0,z); g.scale.setScalar(s);
   g.add(mesh(new T.CylinderGeometry(.2,.24,2.6,8),manM,0,1.3,0));
   [[.55,1.1,.9],[-.5,1.4,.7]].forEach(function(a){ var sd=a[0]>0?1:-1; g.add(rot(mesh(new T.CylinderGeometry(.14,.14,Math.abs(a[0]),6),manM,a[0]/2,a[1],0),0,0,Math.PI/2));
     g.add(mesh(new T.CylinderGeometry(.14,.15,a[2],7),manM,a[0],a[1]+a[2]/2,0)); });
-  scene.add(g); return g; }
+  scene.add(g); TREES.push(g); return g; }
 function carnauba(x,z,s){ s=s||1; var g=new T.Group(); g.position.set(x,0,z); g.scale.setScalar(s);
   g.add(mesh(new T.CylinderGeometry(.11,.16,4.4,7),carT,0,2.2,0));
   for(var i=0;i<9;i++){ var lf=mesh(new T.ConeGeometry(.55,1.5,5,1,true),carL,0,4.5,0); lf.material.side=T.DoubleSide; var a=i/9*Math.PI*2; lf.position.set(Math.cos(a)*.55,4.55,Math.sin(a)*.55); lf.rotation.set(0,-a,0); lf.rotateZ(-1.15); lf.scale.set(1,1,.25); g.add(lf); }
-  scene.add(g); return g; }
+  scene.add(g); TREES.push(g); return g; }
 function shrub(x,z,s){ var m=mesh(new T.DodecahedronGeometry(.55*(s||1),0),rnd()<.5?dryM:dryM2,x,.35*(s||1),z); m.scale.y=.7; scene.add(m); return m; }
 function patch(x,z,rx,rz,c,rot){ var m=mesh(new T.CircleGeometry(1,20),mat(c||0xB28A5A),x,0.025,z); m.rotation.x=-Math.PI/2; m.rotation.z=rot||0; m.scale.set(rx,rz,1); scene.add(m); return m; }
 // mata ciliar: rala e fragmentada no setor oeste (caso 1), um pouco melhor no leste
@@ -123,7 +124,7 @@ var fenceM=mat(0x6e5a44), wireM=new T.MeshBasicMaterial({color:0x5d5d5d});
 // caso 2: casa da curva e lixo disperso (sem cano)
 var C2a=-0.86, casaP=shore(C2a-0.06,4.6); house(casaP.x,casaP.z,2.6,2,1.7,0xE9DCC0,0xB4553C,0.7);
 var trashC=[0xffffff,0x3a8f4a,0x2a64c8,0xf2f2f2,0xd94a3a,0x8fd0ef,0xffffff,0x3a8f4a,0xe8e2d0,0x2a64c8,0xffffff,0x6aa84f];
-for(var lx=0;lx<16;lx++){ var tp=shore(C2a+(rnd()-.5)*0.42,0.3+rnd()*2.2); var tb=mesh(lx%3?new T.BoxGeometry(.22+rnd()*.15,.14,.2+rnd()*.12):new T.CylinderGeometry(.06,.06,.32,6),mat(trashC[lx%trashC.length]),tp.x,.08,tp.z); tb.rotation.set(rnd()*.6,rnd()*3,lx%3?0:Math.PI/2); scene.add(tb); }
+for(var lx=0;lx<16;lx++){ var tp=shore(C2a+(rnd()-.5)*0.42,0.3+rnd()*2.2); var tb=mesh(lx%3?new T.BoxGeometry(.22+rnd()*.15,.14,.2+rnd()*.12):new T.CylinderGeometry(.06,.06,.32,6),mat(trashC[lx%trashC.length]),tp.x,.08,tp.z); tb.rotation.set(rnd()*.6,rnd()*3,lx%3?0:Math.PI/2); scene.add(tb); TRASH.push(tb); }
 var canoaP=shore(C2a+0.2,-1.4), canoa=mesh(new T.CylinderGeometry(.35,.22,2.2,8,1),mat(0x8a5a3a),canoaP.x,.12,canoaP.z); canoa.rotation.z=Math.PI/2; canoa.rotation.y=.9; canoa.scale.set(1,1,.45); scene.add(canoa);
 // caso 3: sede da associação, quadro de avisos e orelhão
 var C3a=0.12, sedeP=shore(C3a,7.6); var sede=house(sedeP.x,sedeP.z,3.8,2.6,2.1,0xF1E7CF,0x2D5FE0,-Math.PI/2); var sedeLab=label('Associação',{w:300,h:64,size:34,scale:1.2}); sedeLab.position.set(sedeP.x,3.6,sedeP.z); scene.add(sedeLab);
@@ -138,7 +139,7 @@ function cow(x,z,ry,c1,c2){ var g=new T.Group(); g.position.set(x,0,z); g.rotati
   g.add(rot(mesh(new T.CylinderGeometry(.03,.03,.5,4),b,-.72,.75,0),0,0,-.5));
   scene.add(g); cows.push({g:g,hd:hd,ph:rnd()*6}); return g; }
 [[C4a+0.05,-0.9,0xf3efe6,0x7a4a2a],[C4a-0.12,-0.45,0x8a5a3a,0x5a3a20],[C4a+0.2,0.5,0xf3efe6,0x2a2a2a]].forEach(function(p,i){ var q=shore(p[0],p[1]); var g=cow(q.x,q.z,-p[0]+Math.PI*(i===2?0.7:1),p[2],p[3]); if(p[1]<0) g.position.y=-0.32; });
-for(var dj=0;dj<9;dj++){ var dq=shore(C4a+(rnd()-.5)*.35,.2+rnd()*1.4); var dm=mesh(new T.CylinderGeometry(.13+rnd()*.06,.16,.05,8),mat(0x5a4022),dq.x,.04,dq.z); scene.add(dm); }
+for(var dj=0;dj<9;dj++){ var dq=shore(C4a+(rnd()-.5)*.35,.2+rnd()*1.4); var dm=mesh(new T.CylinderGeometry(.13+rnd()*.06,.16,.05,8),mat(0x5a4022),dq.x,.04,dq.z); scene.add(dm); DUNG.push(dm); }
 // caso 5: balneário com barracas de alvenaria e cobertura fixa
 var C5a=0.6, balP=[];
 [[C5a-0.1,3.1,0],[C5a+0.06,3.6,0.3],[C5a+0.2,3.2,0.6]].forEach(function(p,i){ var q=shore(p[0],p[1]); balP.push(q); var g=new T.Group(); g.position.set(q.x,0,q.z); g.rotation.y=-p[0]-Math.PI/2;
@@ -150,7 +151,7 @@ var C5a=0.6, balP=[];
   var um=mesh(new T.ConeGeometry(1.1,.5,8),mat(0xF2C14E),q.x+1.2,2.0,q.z-.3); scene.add(um); scene.add(mesh(new T.CylinderGeometry(.04,.04,2,5),mat(0xeeeeee),q.x+1.2,1,q.z-.3)); })();
 // fichas pré-registradas: cenário de cada uma
 var roP=shore(2.72,3.2); (function(){ for(var i=0;i<5;i++) for(var j=0;j<4;j++){ var c=mesh(new T.ConeGeometry(.16,1.1,5),mat(0x7fa64a),roP.x+(i-2)*.5,.55,roP.z+(j-1.5)*.55); scene.add(c); } patch(roP.x,roP.z,1.7,1.4,0xA07A4A); })();
-var erP=shore(-1.36,1.0); (function(){ patch(erP.x,erP.z,2.6,1.4,0xB0714A,0.2); for(var i=0;i<7;i++){ var rv=mesh(new T.BoxGeometry(.09,.03,1.2+rnd()*1.2),mat(0x5e3a22),erP.x+(i-3)*.42+(rnd()-.5)*.2,.035,erP.z+(rnd()-.5)*.4); rv.rotation.y=-1.36+Math.PI/2+(rnd()-.5)*.5; scene.add(rv); } })();
+var erP=shore(-1.36,1.0); (function(){ EROS.push(patch(erP.x,erP.z,2.6,1.4,0xB0714A,0.2)); for(var i=0;i<7;i++){ var rv=mesh(new T.BoxGeometry(.09,.03,1.2+rnd()*1.2),mat(0x5e3a22),erP.x+(i-3)*.42+(rnd()-.5)*.2,.035,erP.z+(rnd()-.5)*.4); rv.rotation.y=-1.36+Math.PI/2+(rnd()-.5)*.5; scene.add(rv); EROS.push(rv); } })();
 var vzA=-1.85; (function(){ patch(shore(vzA,0.5).x,shore(vzA,0.5).z,2.2,1.0,0x8a7a4a,-vzA); for(var i=0;i<14;i++) for(var j=0;j<3;j++){ var q=shore(vzA+(i-6.5)*0.035,0.05+j*0.45); var bu=mesh(new T.IcosahedronGeometry(.17,0),mat(j%2?0x6f9f45:0x8fb35a),q.x,.12,q.z); bu.scale.y=.8; scene.add(bu); } })();
 var casinhaP=shore(-0.32,4.2); house(casinhaP.x,casinhaP.z,2,1.6,1.4,0xF2E2C4,0xA34A33,-0.4);
 var gaiP={x:2.6,z:-3.2}; (function(){ for(var i=0;i<4;i++){ var gx=gaiP.x+(i%2)*1.5, gz=gaiP.z+Math.floor(i/2)*1.5; var fr=mesh(new T.BoxGeometry(1.1,.12,1.1),mat(0x4a5560),gx,.12,gz); scene.add(fr); scene.add(mesh(new T.BoxGeometry(.9,.02,.9),new T.MeshBasicMaterial({color:0x1e3e70}),gx,.19,gz)); } })();
@@ -360,9 +361,10 @@ function placeNPC(k,x,z,faceX,faceZ){ var n=NPC[k]; n.g.visible=true; n.g.positi
 function hideNPC(k){ NPC[k].g.visible=false; }
 
 /* ---- foto de campo: renderiza a cena de outro ponto de vista e guarda a imagem ---- */
+var SNAPTXT='JANDAIA · CAMPANHA 1 · FICTÍCIO';
 var photoCam=new T.PerspectiveCamera(50,4/3,0.1,300);
 function snap(P,Lk){
-  var hideList=[beam,arrow,player,farol,radar].concat(markers), prev=hideList.map(function(o){ return o.visible; });
+  var hideList=[beam,arrow,player,farol,radar].concat(markers).concat(typeof PM!=='undefined'?PM.map(function(m){ return m.g; }):[]).concat(typeof GG!=='undefined'&&GG?[GG]:[]), prev=hideList.map(function(o){ return o.visible; });
   hideList.forEach(function(o){ o.visible=false; }); var labs=[], npcVis=[]; Object.keys(NPC).forEach(function(k){ labs.push(NPC[k].lab); NPC[k].lab.visible=false; npcVis.push([NPC[k].g,NPC[k].g.visible]); NPC[k].g.visible=false; });
   photoCam.aspect=canvas.width/canvas.height; photoCam.updateProjectionMatrix(); photoCam.position.set(P[0],P[1],P[2]); photoCam.lookAt(Lk[0],Lk[1],Lk[2]);
   var fog=scene.fog; scene.fog=null; renderer.render(scene,photoCam); scene.fog=fog;
@@ -371,7 +373,7 @@ function snap(P,Lk){
     x.drawImage(canvas,(W-sw)/2,(H-sh)/2,sw,sh,0,0,400,300);
     var gr=x.createRadialGradient(200,150,90,200,150,260); gr.addColorStop(0,'rgba(0,0,0,0)'); gr.addColorStop(1,'rgba(40,20,0,.28)'); x.fillStyle=gr; x.fillRect(0,0,400,300);
     x.fillStyle='rgba(255,170,60,.07)'; x.fillRect(0,0,400,300);
-    x.font='600 15px '+FONT_C; x.fillStyle='rgba(255,210,120,.95)'; x.textAlign='right'; x.fillText('JANDAIA · CAMPANHA 1 · FICTÍCIO',392,290);
+    x.font='600 15px '+FONT_C; x.fillStyle='rgba(255,210,120,.95)'; x.textAlign='right'; x.fillText(SNAPTXT,392,290);
     url=c2.toDataURL('image/jpeg',.82); }catch(e){ url=''; }
   hideList.forEach(function(o,i){ o.visible=prev[i]; }); labs.forEach(function(l){ l.visible=true; }); npcVis.forEach(function(v){ v[0].visible=v[1]; });
   return url; }

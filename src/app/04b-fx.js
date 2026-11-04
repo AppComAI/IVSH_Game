@@ -81,6 +81,7 @@ function splash(){ rings.forEach(function(r){ r.t=-r.d; r.m.visible=true; }); va
 /* régua: cada faixa toca a sua nota ao clicar */
 var reguaBands=[]; regua.children.forEach(function(o){ if(o.isMesh&&o.geometry.parameters&&o.geometry.parameters.height===1.3){ o.userData={kind:'regua',i:reguaBands.length}; reguaBands.push(o); pickables.push(o); } });
 
+var fxExtra=null;
 function fxTick(dt,tt){
   if(Math.abs(skyGoal-skyK)>0.001){ skyK+=(skyGoal-skyK)*Math.min(1,dt*0.8); applySky(skyK); }
   camera.getWorldPosition(sky.position);
@@ -92,6 +93,7 @@ function fxTick(dt,tt){
   puffs.forEach(function(p){ if(p.t>=1){ p.s.visible=false; return; } p.t+=dt/0.9; var k=Math.min(1,p.t); p.s.scale.setScalar(.35+k*1.3); p.s.material.opacity=.5*(1-k); p.s.position.y+=dt*.35; });
   clouds.forEach(function(c,i){ cloudSh[i].position.x=c.position.x-c.position.y*0.6; cloudSh[i].position.z=c.position.z-c.position.y*0.38; });
   rings.forEach(function(r){ if(r.t>3) { r.m.visible=false; return; } r.t+=dt; if(r.t<0) return; var k=r.t/3; r.m.scale.setScalar(1+k*9); r.m.material.opacity=.8*(1-k); });
+  if(fxExtra) fxExtra(dt,tt);
   if(drops.visible){ dropT+=dt; var p=drops.geometry.attributes.position.array; for(var i=0;i<p.length/3;i++){ dropV[i*3+1]-=9.8*dt; p[i*3]+=dropV[i*3]*dt; p[i*3+1]=Math.max(.05,p[i*3+1]+dropV[i*3+1]*dt); p[i*3+2]+=dropV[i*3+2]*dt; }
     drops.geometry.attributes.position.needsUpdate=true; drops.material.opacity=Math.max(0,.9-dropT*.45); if(dropT>2.2) drops.visible=false; }
 }

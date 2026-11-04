@@ -5,8 +5,9 @@ fonts=open(B+'/src/fonts.css',encoding='utf-8').read()
 three=open(B+'/node_modules/three/build/three.min.js',encoding='utf-8').read()
 three=re.sub(r"^console\.warn\([^;]*\);\s*","",three)
 A=lambda n: open(B+'/src/app/'+n,encoding='utf-8').read()
-top=A('01-data.js')+'\n'+A('02-ui.js')+'\n'+A('03-sfx.js')
-d3=A('04-world.js')+'\n'+A('04b-fx.js')+'\n'+A('05-engine.js')+'\n'+A('06-game.js')+'\n'+A('07-mesa.js')+'\n'+A('08-start.js')
+qrlib=open(B+'/node_modules/qrcode-generator/qrcode.js',encoding='utf-8').read()
+top=qrlib+'\n'+A('vote-data.js')+'\n'+A('01-data.js')+'\n'+A('02-ui.js')+'\n'+A('02b-vote.js')+'\n'+A('03-sfx.js')
+d3=A('04-world.js')+'\n'+A('04b-fx.js')+'\n'+A('04c-fx2.js')+'\n'+A('05-engine.js')+'\n'+A('06-game.js')+'\n'+A('07-mesa.js')+'\n'+A('09-kids.js')+'\n'+A('08-start.js')
 app_tpl="""<script>
 (function(){
 %s
@@ -40,8 +41,15 @@ print('ok',len(out))
 # demo de RV
 vpage=open(B+'/src/vr-page.html',encoding='utf-8').read()
 vtop=A('01-data.js')+'\n'+A('03-sfx.js')
-vd3=A('04-world.js')+'\n'+A('04b-fx.js')+'\n'+A('vr-engine.js')
+vd3=A('04-world.js')+'\n'+A('04b-fx.js')+'\n'+A('04c-fx2.js')+'\n'+A('vr-engine.js')
 vapp=app_tpl % (vtop,vd3)
 vout=vpage.replace('/*__FONTS__*/',fonts).replace('<!--__THREE__-->','<script>'+three+'</script>').replace('<!--__APP__-->',vapp)
 open(B+'/vr.html','w',encoding='utf-8').write(vout)
 print('vr ok',len(vout))
+
+# página de votação (celular)
+vt=open(B+'/src/votar-page.html',encoding='utf-8').read()
+vjs=A('vote-data.js')+'\n'+A('votar.js')
+vtout=vt.replace('/*__FONTS__*/',fonts).replace('<!--__APP__-->','<script>\n'+vjs+'\n</script>')
+open(B+'/votar.html','w',encoding='utf-8').write(vtout)
+print('votar ok',len(vtout))
