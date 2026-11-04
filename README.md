@@ -7,6 +7,10 @@ RPG 3D educativo sobre o **IVSH** (Índice de Vulnerabilidade Socioambiental de 
 
 Os dois arquivos são independentes, não precisam de internet (three.js e fontes vão embutidos) e devem ficar na mesma pasta, porque um tem link para o outro.
 
+## Narração das boas-vindas
+
+Ao entrar, o jogo abre uma janela de boas-vindas (o que é, para que serve, como jogar). Ela tem espaço para uma narração gravada: coloque o arquivo em `narracao/` com o nome `narracao.mp3` (ou `.m4a`, `.ogg`, `.wav`) e rode `python3 build.py`; o áudio é embutido no `index.html`. Sem arquivo, o botão de ouvir não aparece. O roteiro está em [`narracao/ROTEIRO.md`](narracao/ROTEIRO.md).
+
 ## Publicar no GitHub Pages
 
 Settings → Pages → Build and deployment → *Deploy from a branch* → `main` / `(root)`.

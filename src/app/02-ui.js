@@ -113,8 +113,29 @@ document.addEventListener('keydown',function(e){
   if(e.key!=='Escape') return;
   if(!$('regua').hidden){ e.preventDefault(); closeRegua(); return; }
   if(!$('rules').hidden){ e.preventDefault(); closeRules(); return; }
+  if(!$('welcome').hidden){ e.preventDefault(); closeWelcome(); return; }
   if($('gamebox').classList.contains('full')) toggleFull();
 });
 function toggleFull(){ var gb=$('gamebox'); gb.classList.toggle('full'); var fl=gb.classList.contains('full'); $('gfull').textContent=fl?'✕':'⛶'; $('gfull').title=fl?'Sair da tela cheia':'Ampliar'; $('gfull').setAttribute('aria-label',fl?'Sair da tela cheia':'Ampliar'); if(HOOK.resize) HOOK.resize(); }
 $('gfull').addEventListener('click',toggleFull);
 renderDash();
+
+/* ===================== BOAS-VINDAS (com narração opcional) ===================== */
+var welLast=null, NA=$('narraudio');
+function openWelcome(){ welLast=document.activeElement; $('welcome').hidden=false; try{ $('welhide').checked=localStorage.getItem('regua_bv')==='0'; }catch(e){} $('welgo').focus(); }
+function closeWelcome(){ $('welcome').hidden=true; if(!NA.paused) NA.pause(); if(welLast&&welLast.focus) welLast.focus(); }
+$('welx').addEventListener('click',closeWelcome);
+$('welcome').addEventListener('click',function(e){ if(e.target===this) closeWelcome(); });
+$('openwel').addEventListener('click',openWelcome);
+$('welrules').addEventListener('click',function(){ closeWelcome(); openRules(); });
+$('welgo').addEventListener('click',function(){ closeWelcome(); if(HOOK.play) HOOK.play(); });
+$('welhide').addEventListener('change',function(){ try{ localStorage.setItem('regua_bv',this.checked?'0':'1'); }catch(e){} });
+function mmss(t){ t=Math.max(0,Math.round(t||0)); return Math.floor(t/60)+':'+String(t%60).padStart(2,'0'); }
+if(typeof NARR_SRC==='string'&&NARR_SRC){ NA.src=NARR_SRC; $('narr').hidden=false;
+  $('narrplay').addEventListener('click',function(){ if(NA.paused){ NA.play().catch(function(){}); } else NA.pause(); });
+  NA.addEventListener('play',function(){ $('narrplay').textContent='❚❚ Pausar'; $('narrplay').setAttribute('aria-pressed','true'); if(window.SFXduck) SFXduck(true); });
+  NA.addEventListener('pause',function(){ $('narrplay').textContent=NA.ended||NA.currentTime<0.1?'▶ Ouvir a apresentação':'▶ Continuar'; $('narrplay').setAttribute('aria-pressed','false'); if(window.SFXduck) SFXduck(false); });
+  NA.addEventListener('ended',function(){ NA.currentTime=0; $('narrplay').textContent='▶ Ouvir de novo'; });
+  NA.addEventListener('timeupdate',function(){ var d=NA.duration||0; $('narrfill').style.width=(d?NA.currentTime/d*100:0)+'%'; $('narrtime').textContent=mmss(NA.currentTime)+' / '+mmss(d); });
+  NA.addEventListener('loadedmetadata',function(){ $('narrtime').textContent='0:00 / '+mmss(NA.duration); }); }
+(function(){ var show=true; try{ show=localStorage.getItem('regua_bv')!=='0'; }catch(e){} if(show) openWelcome(); })();

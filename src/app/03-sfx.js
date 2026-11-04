@@ -101,6 +101,7 @@ var SFX=(function(){
       if(stepN%2===0) noise(t+0.005,0.035,{ft:'highpass',f:7000,vol:0.05}); else noise(t+0.005,0.09,{ft:'highpass',f:6500,vol:0.06});
       if(stepN%8===0){ var fr=[[79,81],[81,83],[83,86],[86,83,81]][Math.floor(Math.random()*4)], tt=t+0.04; fr.forEach(function(m){ pife(m,tt,0.16,0.07); tt+=0.13; }); } },
     walkVoice:function(w){ if(!ctx) return; if(!w&&walking&&ready()) noise(ctx.currentTime+0.03,0.05,{ft:'bandpass',f:2600,q:3,vol:0.2}); if(w&&!walking) stepN=0; walking=w; },
+    duck:function(v){ if(ctx) mus.gain.setTargetAtTime(v?0.02:(sala?0:0.15),ctx.currentTime,0.25); },
     sala:function(v){ if(v!==undefined){ sala=!!v; try{ localStorage.setItem('regua_sala',sala?'1':'0'); }catch(e){} if(ctx){ mus.gain.setTargetAtTime(sala?0:0.15,ctx.currentTime,0.1); fx.gain.setTargetAtTime(sala?0.22:0.45,ctx.currentTime,0.1); } } return sala; },
     active:function(a){ if(a===act) return; act=a; if(ctx){ if(a&&on) ctx.resume(); else if(!a) ctx.suspend(); } },
     toggle:function(){ on=!on; try{ localStorage.setItem('regua_som',on?'1':'0'); }catch(e){}
@@ -112,5 +113,6 @@ var SFX=(function(){
 function syncSoundBtn(){ var b=$('gsound'); var o=SFX.isOn(); b.textContent=o?'🔊':'🔇'; b.setAttribute('aria-pressed',o?'true':'false'); b.title=o?'Desligar o som':'Ligar o som'; }
 $('gsound').addEventListener('click',function(){ SFX.toggle(); syncSoundBtn(); });
 syncSoundBtn();
+window.SFXduck=function(v){ SFX.duck(v); };
 function syncSala(){ var b=$('gsala'); if(!b) return; var v=SFX.sala(); b.setAttribute('aria-pressed',v?'true':'false'); b.title=v?'Modo sala de aula ligado: sem música, efeitos baixos':'Modo sala de aula: sem música, efeitos baixos'; }
 if($('gsala')){ $('gsala').addEventListener('click',function(){ SFX.sala(!SFX.sala()); syncSala(); }); syncSala(); }

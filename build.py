@@ -25,6 +25,15 @@ if(!window.THREE||!webglOK()){
 })();
 </script>"""
 app=app_tpl % (top,d3)
+import glob,base64
+na=sorted(glob.glob(B+'/narracao/narracao.*'))
+MT={'.mp3':'audio/mpeg','.m4a':'audio/mp4','.aac':'audio/aac','.ogg':'audio/ogg','.opus':'audio/ogg','.wav':'audio/wav','.webm':'audio/webm'}
+narr=''
+if na:
+    ext=os.path.splitext(na[0])[1].lower(); narr='data:'+MT.get(ext,'audio/mpeg')+';base64,'+base64.b64encode(open(na[0],'rb').read()).decode()
+    print('narracao embutida:',os.path.basename(na[0]),len(narr)//1024,'KB')
+else: print('sem narracao (pasta narracao/ vazia)')
+app=app.replace('(function(){\n','(function(){\nvar NARR_SRC='+repr(narr).replace("'",'"')+';\n',1)
 out=page.replace('/*__FONTS__*/',fonts).replace('<!--__THREE__-->','<script>'+three+'</script>').replace('<!--__APP__-->',app)
 open(B+'/index.html','w',encoding='utf-8').write(out)
 print('ok',len(out))

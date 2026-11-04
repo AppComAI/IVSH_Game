@@ -282,6 +282,18 @@ h2{font:700 19px/1.15 var(--font-cond);margin:0;letter-spacing:.01em}
 .rnote{font-size:13px;color:var(--muted)}
 kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--bg);white-space:nowrap}
 .rfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.wbox{width:min(860px,100%)}
+.wgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 24px}
+.wgrid section h3{font:700 15px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:6px 0 6px}
+.wgrid p{font-size:14.5px}
+@media (max-width:700px){.wgrid{grid-template-columns:minmax(0,1fr)}}
+.narr{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin:0 0 14px}
+.narr button{white-space:nowrap}
+.narrbar{flex:1 1 140px;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.narrbar b{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
+#narrtime{font:600 13px var(--font-cond);color:var(--muted);min-width:76px;text-align:right}
+.welhide{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.welbtns{display:flex;gap:8px;flex-wrap:wrap}
 .rhead,.rtabs,.rfoot{flex-shrink:0}
 .rtw{overflow-x:auto}
 .rtab{border-collapse:collapse;width:100%;font-size:13px;min-width:760px}
@@ -328,7 +340,7 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
         <div class="scale" id="scale" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
         <div class="sticks" aria-hidden="true"><span>0</span><span>0,75</span><span>1,50</span><span>2,25</span><span>3</span></div>
         <div class="legend"><span class="cell s0"><b>0</b></span>mais favorável <span class="cell s3"><b>3</b></span>mais vulnerável <span class="cell na"></span>sem registro (fora da média) <span class="cell pend"></span>pendente</div>
-        <div class="btnrow"><button type="button" id="openregua">Régua completa (18 indicadores)</button><button type="button" id="openrules2">Regras do jogo</button></div>
+        <div class="btnrow"><button type="button" id="openregua">Régua completa (18 indicadores)</button><button type="button" id="openrules2">Regras do jogo</button><button type="button" id="openwel">Boas-vindas</button></div>
       </section>
 
       <section class="card" aria-labelledby="h-rank">
@@ -388,6 +400,41 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
     </nav>
     <div class="rbody"><div class="rtw"><table class="rtab"><thead><tr><th>Código</th><th>Indicador</th><th>Definição operacional</th><th>Evidência mínima</th><th>Escala 0–3</th><th>Sentido</th></tr></thead><tbody id="regbody"></tbody></table></div></div>
     <div class="rfoot"><span>Escala ordinal: 0 = condição mais favorável, 3 = mais vulnerável, em todos os indicadores. “Inverso” = item protetivo; a escala já o alinha ao mesmo sentido.</span><span>Fonte: apresentação do artigo (quadro da equipe).</span></div>
+  </div>
+</div>
+
+<!-- Boas-vindas -->
+<div class="rmodal" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="welt">
+  <div class="rbox wbox">
+    <div class="rhead">
+      <div><span class="kick">Boas-vindas · RPG 3D sobre o IVSH</span><h2 id="welt">A Régua das Águas</h2></div>
+      <button type="button" class="rx" id="welx" aria-label="Fechar boas-vindas">✕</button>
+    </div>
+    <div class="rbody">
+      <div class="narr" id="narr" hidden>
+        <button type="button" class="pri" id="narrplay" aria-pressed="false">▶ Ouvir a apresentação</button>
+        <div class="narrbar" aria-hidden="true"><b id="narrfill"></b></div><span id="narrtime">0:00</span>
+        <audio id="narraudio" preload="metadata"></audio>
+      </div>
+      <div class="wgrid">
+        <section><h3>O que é</h3><p>Um jogo em 3D sobre o <b>IVSH</b>, índice proposto para medir a vulnerabilidade socioambiental dos açudes da Gerência Metropolitana de Fortaleza. Você joga como quem aplica a régua numa campanha de campo.</p></section>
+        <section><h3>Para que serve</h3><p>Mostrar como uma régua comum transforma o que se vê em campo em decisão que pode ser auditada: nota com prova, item sem prova fora da conta, um fato em um só indicador e aplicadores que concordam pelo descritor.</p><p class="rnote">Usos pensados: formação de equipes, apresentação do artigo e, numa versão adaptada, educação ambiental nas escolas.</p></section>
+        <section><h3>Como jogar</h3><ol class="rlist">
+          <li><b>Começar</b> e acompanhar o sobrevoo. Um toque na cena pula a animação.</li>
+          <li><b>Andar:</b> clique no chão ou use <b>Ir até lá</b>. O farol amarelo marca o próximo caso.</li>
+          <li><b>Em cada caso:</b> fotografe, leia os descritores e dê a nota de 0 a 3, ou “sem registro” quando falta prova.</li>
+          <li><b>No fim:</b> feche a ficha e leve à Mesa da Controladoria, com auditoria, orçamento e audiência pública.</li>
+        </ol></section>
+        <section><h3>Bom saber</h3><ul class="rlist">
+          <li>Duração: cerca de 20 minutos (estimativa).</li>
+          <li>O painel ao lado mostra o índice se formando, do indicador à faixa.</li>
+          <li>Botões no canto do jogo: <b>SALA</b> (sem música), <b>?</b> (regras), som e tela cheia.</li>
+          <li>Açudes, pessoas e notas são fictícios; o IVSH ainda não foi validado.</li>
+          <li>Tem óculos de realidade virtual? Abra a <a href="vr.html">demo de RV</a>.</li>
+        </ul></section>
+      </div>
+    </div>
+    <div class="rfoot"><label class="welhide"><input type="checkbox" id="welhide"> Não mostrar ao entrar</label><div class="welbtns"><button type="button" id="welrules">Regras completas</button><button type="button" class="pri" id="welgo">Começar</button></div></div>
   </div>
 </div>
 
