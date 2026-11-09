@@ -15,7 +15,7 @@ function renderFlow(){
   var started=Object.keys(sc).length>0;
   $('ivnum').textContent=started?fmt(r.ivsh):'—';
   var fx=$('ivfx');
-  if(!started){ fx.className='fx'; fx.textContent='aguardando'; $('ivnote').textContent='A ficha do Jandaia começa na campanha de campo.'; }
+  if(!started){ fx.className='fx'; fx.textContent='aguardando'; $('ivnote').textContent='A ficha do Pacajus começa na campanha de campo.'; }
   else { fx.className='fx '+(r.fx?r.fx.k:''); fx.textContent=(r.fx?r.fx.n:'—')+(r.pend?' · parcial':'');
     $('ivnote').textContent= r.pend ? r.pend+' indicador(es) pendente(s). O valor muda conforme a campanha avança.' :
       (G.audited?'Ficha auditada pela Mesa da Controladoria.':(G.closed?'Ficha fechada. Falta a auditoria.':'Todos os indicadores registrados.')); }
@@ -23,7 +23,7 @@ function renderFlow(){
   var sEl=$('scale'); Array.prototype.forEach.call(sEl.querySelectorAll('.mk'),function(m){ m.remove(); });
   function mark(v,txt,o){ if(v==null) return; var e=document.createElement('div'); e.className='mk'+(o?' o':''); e.style.left=(Math.max(0,Math.min(3,v))/3*100)+'%'; e.textContent=txt; sEl.appendChild(e); }
   if(G.reguaOn) ACUDES.forEach(function(a){ if(a.me) return; mark(calc(G.audited?a.aud:a.regd).ivsh,a.n.slice(0,4),true); });
-  if(started) mark(r.ivsh,'Jandaia '+fmt(r.ivsh));
+  if(started) mark(r.ivsh,'Pacajus '+fmt(r.ivsh));
   // passos
   var stp=!started?-1:(r.pend?0:(G.closed?3:2));
   Array.prototype.forEach.call($('steps').children,function(li,i){ li.classList.toggle('on',started&&(i<=stp||(r.pend&&i<3))); });

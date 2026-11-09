@@ -89,6 +89,7 @@ function setObj(t){ objEl.hidden=!t; objEl.innerHTML=t||''; }
 
 /* --- fluxo --- */
 function startKids(){
+  if(window.menEvent) menEvent('reset');
   K.autoPrev=CAM.auto; K.full=!$('gamebox').classList.contains('full'); if(K.full) toggleFull(); K.on=true; K.mode='intro'; K.found={}; K.ans={}; K.plan={}; K.q=[]; K.an=[]; K.hint=false; K.busy=false; K.goal=-1; SNAPTXT='AÇUDE DE TREINO · FICTÍCIO'; G.evid=[]; G.mode='kidsbusy'; G.caseI=99;
   SFX.start(); SFX.scene('campo'); hud.hidden=true; setObj(null); closePanel(); GG.visible=true; K.fresh=true; PM.forEach(function(m){ m.g.visible=false; m.ok.visible=false; m.q.visible=true; });
   otto.visible=false; serras.visible=true; scene.fog.near=70; scene.fog.far=150; releaseCam(); CAM.orbit=false; CAM.z=0; CAM.boost=0; setDusk(false,true); player.position.set(0,0,17.8); player.rotation.y=Math.PI; G.target=null;
@@ -222,4 +223,4 @@ function baixaSelo(){ try{ var img=new Image(), svg=seloSVG(); img.onload=functi
   img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg); }catch(e){ toast('Não consegui gerar a imagem neste aparelho'); } }
 function kLimpa(){ kUndoAll(); K.on=true; setDusk(false,true); kReguaOff(); regua.visible=false; regua.position.y=-9; regua.userData.glow.visible=false; PM.forEach(function(m){ m.g.visible=false; }); khand.hidden=true; setObj(null); closePanel(); releaseCam(); K.mode='off'; K.hint=false; K.busy=false; G.target=null; }
 function kReinicia(){ kLimpa(); startKids(); }
-function kSai(){ kLimpa(); K.on=false; if(K.full&&$('gamebox').classList.contains('full')) toggleFull(); GG.visible=false; SNAPTXT='JANDAIA · CAMPANHA 1 · FICTÍCIO'; G.mode='title'; G.caseI=0; otto.visible=true; otto.material.opacity=1; serras.visible=false; scene.fog.near=600; scene.fog.far=1400; CAM.boost=0; CAM.user=0; CAM.auto=K.autoPrev!==false; player.position.set(0,0,18); intro(); }
+function kSai(){ kLimpa(); K.on=false; if(K.full&&$('gamebox').classList.contains('full')) toggleFull(); GG.visible=false; SNAPTXT='PACAJUS · CAMPANHA 1 · FICTÍCIO'; G.mode='title'; G.caseI=0; otto.visible=true; otto.material.opacity=1; serras.visible=false; scene.fog.near=600; scene.fog.far=1400; CAM.boost=0; CAM.user=0; CAM.auto=K.autoPrev!==false; player.position.set(0,0,18); intro(); }

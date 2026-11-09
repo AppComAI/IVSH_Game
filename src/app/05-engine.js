@@ -70,12 +70,56 @@ function hideBeam(){ beam.visible=arrow.visible=false; }
 
 /* movimento */
 var ray=new T.Raycaster(), ndc=new T.Vector2(), plane=new T.Plane(new T.Vector3(0,1,0),0), hitp=new T.Vector3();
+/* navegação: grade de ocupação + A*. Nada sólido é atravessado: lago, barramento, construções,
+   cerca (só passa pelos trechos rompidos e pela entrada da estrada), árvores, arbustos, postes,
+   adutora, gado e pessoas. Os obstáculos vêm de COL (04-world), com a folga do corpo do jogador. */
+var NAV=(function(){
+  var CS=0.25, RW=26, PR=0.5, O=-RW-CS, N=Math.ceil((2*RW+2*CS)/CS), stat=new Uint8Array(N*N), grid=new Uint8Array(N*N);
+  function ci(v){ return Math.max(0,Math.min(N-1,Math.floor((v-O)/CS))); } function wc(i){ return O+(i+0.5)*CS; }
+  function circ(G,x,z,r){ var R=r+PR, i0=ci(x-R), i1=ci(x+R), j0=ci(z-R), j1=ci(z+R);
+    for(var j=j0;j<=j1;j++) for(var i=i0;i<=i1;i++){ var dx=wc(i)-x, dz=wc(j)-z; if(dx*dx+dz*dz<=R*R) G[j*N+i]=1; } }
+  function rect(G,o){ var c=Math.cos(o.ry), s=Math.sin(o.ry), ex=Math.abs(o.hw*c)+Math.abs(o.hd*s)+PR, ez=Math.abs(o.hw*s)+Math.abs(o.hd*c)+PR, i0=ci(o.x-ex), i1=ci(o.x+ex), j0=ci(o.z-ez), j1=ci(o.z+ez);
+    for(var j=j0;j<=j1;j++) for(var i=i0;i<=i1;i++){ var dx=wc(i)-o.x, dz=wc(j)-o.z, lx=Math.max(Math.abs(dx*c-dz*s)-o.hw,0), lz=Math.max(Math.abs(dx*s+dz*c)-o.hd,0); if(lx*lx+lz*lz<=PR*PR) G[j*N+i]=1; } }
+  function seg(G,o){ var R=o.t/2+PR, i0=ci(Math.min(o.x1,o.x2)-R), i1=ci(Math.max(o.x1,o.x2)+R), j0=ci(Math.min(o.z1,o.z2)-R), j1=ci(Math.max(o.z1,o.z2)+R), vx=o.x2-o.x1, vz=o.z2-o.z1, L2=vx*vx+vz*vz||1;
+    for(var j=j0;j<=j1;j++) for(var i=i0;i<=i1;i++){ var px=wc(i)-o.x1, pz=wc(j)-o.z1, t=Math.max(0,Math.min(1,(px*vx+pz*vz)/L2)), dx=px-vx*t, dz=pz-vz*t; if(dx*dx+dz*dz<=R*R) G[j*N+i]=1; } }
+  for(var j=0;j<N;j++) for(var i=0;i<N;i++){ var x=wc(i), z=wc(j), r=Math.hypot(x,z); if(r>RW||r<lakeR(Math.atan2(z,x))+0.7) stat[j*N+i]=1; }
+  COL.c.forEach(function(o){ circ(stat,o.x,o.z,o.r); }); COL.r.forEach(function(o){ rect(stat,o); }); COL.s.forEach(function(o){ seg(stat,o); });
+  function dyn(){ grid.set(stat);   // gente e gado entram na hora de planejar
+    Object.keys(NPC).forEach(function(k){ var g=NPC[k].g; if(g.visible) circ(grid,g.position.x,g.position.z,0.3); });
+    cows.forEach(function(w){ var g=w.g, a=g.rotation.y; rect(grid,{x:g.position.x+0.15*Math.cos(a),z:g.position.z-0.15*Math.sin(a),hw:0.9,hd:0.33,ry:a}); }); }
+  function nearest(G,i0,j0){ if(!G[j0*N+i0]) return j0*N+i0;   // célula livre mais próxima (anéis crescentes)
+    for(var k=1;k<N;k++){ var best=-1, bd=1e9; for(var j=j0-k;j<=j0+k;j++) for(var i=i0-k;i<=i0+k;i++){ if(i<0||j<0||i>=N||j>=N) continue; if(Math.max(Math.abs(i-i0),Math.abs(j-j0))!==k||G[j*N+i]) continue; var d=(i-i0)*(i-i0)+(j-j0)*(j-j0); if(d<bd){ bd=d; best=j*N+i; } } if(best>=0) return best; } return -1; }
+  function free(x,z){ if(Math.hypot(x,z)>RW-0.5||!stat[ci(z)*N+ci(x)]) return {x:x,z:z}; var c=nearest(stat,ci(x),ci(z)); return c<0?{x:x,z:z}:{x:wc(c%N),z:wc((c/N)|0)}; }   // fora da área de caminhada (Mesa) fica onde está
+  var gS=new Float32Array(N*N), from=new Int32Array(N*N), st=new Uint8Array(N*N), heap=[];
+  function hpush(n,f){ heap.push([f,n]); var k=heap.length-1; while(k>0){ var p=(k-1)>>1; if(heap[p][0]<=heap[k][0]) break; var t=heap[p]; heap[p]=heap[k]; heap[k]=t; k=p; } }
+  function hpop(){ var top=heap[0], last=heap.pop(); if(heap.length){ heap[0]=last; var k=0; for(;;){ var l=2*k+1, r=l+1, m=k; if(l<heap.length&&heap[l][0]<heap[m][0]) m=l; if(r<heap.length&&heap[r][0]<heap[m][0]) m=r; if(m===k) break; var t=heap[m]; heap[m]=heap[k]; heap[k]=t; k=m; } } return top; }
+  var NB=[[1,0,1],[-1,0,1],[0,1,1],[0,-1,1],[1,1,1.4142],[1,-1,1.4142],[-1,1,1.4142],[-1,-1,1.4142]];
+  function astar(s,g){ st.fill(0); heap.length=0; var gi=g%N, gj=(g/N)|0;
+    function h(n){ var dx=Math.abs(n%N-gi), dz=Math.abs(((n/N)|0)-gj); return (dx+dz)+(1.4142-2)*Math.min(dx,dz); }
+    gS[s]=0; from[s]=-1; st[s]=1; hpush(s,h(s)); var best=s, bh=h(s);
+    while(heap.length){ var n=hpop()[1]; if(st[n]===2) continue; st[n]=2; if(n===g){ best=g; break; } var hn=h(n); if(hn<bh){ bh=hn; best=n; }
+      var i=n%N, j=(n/N)|0;
+      for(var k=0;k<8;k++){ var ii=i+NB[k][0], jj=j+NB[k][1]; if(ii<0||jj<0||ii>=N||jj>=N) continue; var m=jj*N+ii; if(grid[m]||st[m]===2) continue;
+        if(NB[k][2]>1&&(grid[j*N+ii]||grid[jj*N+i])) continue;   // sem cortar quina
+        var ng=gS[n]+NB[k][2]; if(st[m]===1&&ng>=gS[m]) continue; gS[m]=ng; from[m]=n; st[m]=1; hpush(m,ng+h(m)); } }
+    var out=[]; for(var c=best;c>=0;c=from[c]) out.push(c); return out.reverse(); }
+  function los(ax,az,bx,bz){ var d=Math.hypot(bx-ax,bz-az), n=Math.ceil(d/0.08); for(var k=1;k<=n;k++){ var t=k/n; if(grid[ci(az+(bz-az)*t)*N+ci(ax+(bx-ax)*t)]) return false; } return true; }
+  function plan(px,pz,tx,tz){ dyn();
+    var s=nearest(grid,ci(px),ci(pz)), tc=ci(tz)*N+ci(tx), g=nearest(grid,ci(tx),ci(tz)); if(s<0||g<0) return [];
+    var cells=astar(s,g), pts=cells.map(function(c){ return {x:wc(c%N),z:wc((c/N)|0)}; });
+    if(cells.length&&cells[cells.length-1]===tc&&!grid[tc]) pts[pts.length-1]={x:tx,z:tz};   // destino livre: vai ao ponto exato
+    var out=[], cur={x:px,z:pz}, i=-1;
+    if(grid[ci(pz)*N+ci(px)]&&pts.length){ out.push(pts[0]); cur=pts[0]; i=0; }   // começou encostado em algo: primeiro sai
+    while(i<pts.length-1){ var j=i+1; while(j+1<pts.length&&los(cur.x,cur.z,pts[j+1].x,pts[j+1].z)) j++; out.push(pts[j]); cur=pts[j]; i=j; }
+    return out; }
+  return {plan:plan,free:free,blocked:function(x,z){ return !!stat[ci(z)*N+ci(x)]; },_g:function(){ return {N:N,O:O,CS:CS,stat:stat,grid:grid,dyn:dyn,los:los}; }};
+})();
 function walkTo(x,z,stopShort){
   if(G.mode!=='explore') return;
-  var a=Math.atan2(z,x), r=Math.hypot(x,z), lim=lakeR(a)+0.9; if(r<lim){ x=Math.cos(a)*lim; z=Math.sin(a)*lim; }
-  r=Math.hypot(x,z); if(r>26){ x*=26/r; z*=26/r; }
   if(stopShort){ var px=player.position.x-x, pz=player.position.z-z, pd=Math.hypot(px,pz)||1; x+=px/pd*1.2; z+=pz/pd*1.2; }
-  G.target={x:x,z:z};
+  var path=NAV.plan(player.position.x,player.position.z,x,z);
+  if(!path.length){ G.target=null; G.path=null; return; }
+  G.path=path; G.target=path[path.length-1];
 }
 canvas.addEventListener('pointerdown',function(e){
   if((CAM.path||CAM.cine)&&dlg.hidden){ CAM.skip(); return; }
@@ -92,7 +136,6 @@ canvas.addEventListener('pointerdown',function(e){
 function arriveFly(c){ var px=player.position.x, pz=player.position.z, r=Math.hypot(c.p.x,c.p.z)||1, ox=c.p.x/r, oz=c.p.z/r;
   var fin=[px+5.4,6.6,pz+6.8], finL=[px+0.4,1.0,pz+0.5];
   flyTo([[c.p.x+ox*9+3,15,c.p.z+oz*9+3],[c.p.x+ox*4+7,9,c.p.z+oz*4+8],fin],[[c.p.x*0.6,0,c.p.z*0.6],[c.p.x,1,c.p.z],finL],2.8,function(){ CAM.z=1; CAM.boost=1; openCase(); }); }
-function damY(x,z){ if(Math.abs(x)>8) return 0; var d=Math.abs(z-9.7); if(d>=1.7) return 0; return d<=0.55?1.55:1.55*(1.7-d)/1.15; }
 
 /* laço */
 var clock=new T.Clock(), visible=true, tt=0;
@@ -102,22 +145,24 @@ function loop(){
   SFX.active(visible&&!document.hidden);
   if(!visible||document.hidden) return;
   var raw=clock.getDelta(), dt=Math.min(raw,0.06), rdt=Math.min(raw,0.25); tt+=dt;
-  // jogador (desvia do lago deslizando pela margem)
-  if(G.target){ var px=player.position.x, pz=player.position.z, dx=G.target.x-px, dz=G.target.z-pz, d=Math.hypot(dx,dz), stp=7.5*dt;
-    if(d<=stp){ player.position.x=G.target.x; player.position.z=G.target.z; G.target=null; }
-    else { var nx=px+dx/d*stp, nz=pz+dz/d*stp, a=Math.atan2(nz,nx), lim=lakeR(a)+0.7;
-      if(Math.hypot(nx,nz)<lim){ var a0=Math.atan2(pz,px), tx=-Math.sin(a0), tz=Math.cos(a0), sg=(tx*dx+tz*dz)>=0?1:-1; nx=px+tx*sg*stp; nz=pz+tz*sg*stp; a=Math.atan2(nz,nx); lim=lakeR(a)+0.7; if(Math.hypot(nx,nz)<lim){ nx=Math.cos(a)*lim; nz=Math.sin(a)*lim; } }
-      player.rotation.y=Math.atan2(nx-px,nz-pz); player.position.x=nx; player.position.z=nz;
-      var ph=Math.floor(OP.phase()/Math.PI); if(ph!==G._stp){ G._stp=ph; SFX.step(); puff(player.position.x,player.position.z); } }
+  // jogador: segue o caminho calculado (contorna tudo o que é sólido)
+  if(!G.target) G.path=null;
+  if(G.target&&G.path){ var px=player.position.x, pz=player.position.z, nx=px, nz=pz, rem=7.5*dt;
+    while(rem>1e-6&&G.path.length){ var w=G.path[0], dx=w.x-nx, dz=w.z-nz, d=Math.hypot(dx,dz); if(d<=rem){ nx=w.x; nz=w.z; rem-=d; G.path.shift(); } else { nx+=dx/d*rem; nz+=dz/d*rem; rem=0; } }
+    if(Math.abs(nx-px)+Math.abs(nz-pz)>1e-5){ var yw=Math.atan2(nx-px,nz-pz)-player.rotation.y; yw=Math.atan2(Math.sin(yw),Math.cos(yw)); player.rotation.y+=yw*Math.min(1,dt*14); }
+    player.position.x=nx; player.position.z=nz;
+    var ph=Math.floor(OP.phase()/Math.PI); if(ph!==G._stp){ G._stp=ph; SFX.step(); puff(player.position.x,player.position.z); }
+    if(!G.path.length){ G.target=null; G.path=null; }
   }
-  player.position.y+=(damY(player.position.x,player.position.z)-player.position.y)*Math.min(1,dt*10);
+  player.position.y+=(0-player.position.y)*Math.min(1,dt*10);
   var moving=!!G.target; OP.update(dt,moving,tt,!moving&&G.mode==='explore'?'look':'idle',1.6); SFX.walkVoice(moving);
   if(G.mode==='explore'&&!moving){ G.idleT=(G.idleT||0)+rdt; if(G.idleT>12){ G.idleT=-14; SFX.whistle(); } } else G.idleT=0;
   Object.keys(NPC).forEach(function(k){ var n=NPC[k]; if(n.g.visible) n.c.update(dt,false,tt,n.mode); });
+  if(window.menTick) menTick(dt,tt);   // o menino
   // chegada ao caso
   if(G.mode==='explore'&&G.caseI<CASES.length){ var c=CASES[G.caseI], ddx=c.p.x-player.position.x, ddz=c.p.z-player.position.z;
     if(ddx*ddx+ddz*ddz<2.6*2.6){ G.target=null; player.rotation.y=Math.atan2(NPC[c.npc].g.position.x-player.position.x,NPC[c.npc].g.position.z-player.position.z);
-      SFX.arrive(); if(CAM.auto){ G.mode='arriving'; objEl.hidden=true; arriveFly(c); } else openCase(); } }
+      SFX.arrive(); if(window.menEvent) menEvent('arrive'); if(CAM.auto){ G.mode='arriving'; objEl.hidden=true; arriveFly(c); } else openCase(); } }
   // régua subindo
   if(regua.visible){ regua.position.y+=((regua.userData.goal||0)-regua.position.y)*Math.min(1,dt*1.3); var gl=regua.userData.glow; gl.visible=true; gl.scale.setScalar(1+0.15*Math.sin(tt*2.4)); gl.material.opacity=.35+.2*Math.sin(tt*2.4); }
   // pilares da Mesa

@@ -58,27 +58,27 @@ function clone(o){ var r={}; for(var k in o) r[k]=o[k]; return r; }
 /* Classes de estado trófico usadas no jogo (cores ilustrativas) */
 var IET_CL=[{n:'oligotrófico',c:'#4C8DDB'},{n:'mesotrófico',c:'#3FA36B'},{n:'eutrófico',c:'#E1B42C'},{n:'supereutrófico',c:'#E07A2B'},{n:'hipereutrófico',c:'#B8442E'}];
 
-/* ===================== AÇUDES FICTÍCIOS ===================== */
+/* ===================== AÇUDES: nomes reais, dados fictícios ===================== */
 var N=null;
-var JANDAIA_GAB=mk([2,1,2,1,2, 3,1,3,2,1,1, N,2,2,1, 2,1,2]);
+var PACAJUS_GAB=mk([2,1,2,1,2, 3,1,3,2,1,1, N,2,2,1, 2,1,2]);
 var CASE_CODES=['D1.1','D2.5','D3.1','D2.3','D2.1'];
 var ACUDES=[
- {id:'jandaia',n:'Jandaia',reg:'sua campanha',me:true,iet:2},
- {id:'carnauba',n:'Carnaúba',reg:'Regional Norte (fictícia)',iet:3,
+ {id:'pacajus',n:'Pacajus',reg:'sua campanha',me:true,iet:2},
+ {id:'pacoti',n:'Pacoti',reg:'Regional Norte (fictícia)',iet:3,
   nom:{'Mata ciliar':'Escassa','Balneário':'Tem, bastante','Comissão':'Não tem','Gado':'Muito, na beira'},
   regd:mk([3,2,3,1,3, 2,2,3,3,2,1, 3,3,2,2, 2,2,3]), glosas:[]},
- {id:'juazeiro',n:'Juazeiro',reg:'Regional Sul (fictícia)',iet:1,
+ {id:'gaviao',n:'Gavião',reg:'Regional Sul (fictícia)',iet:1,
   nom:{'Mata ciliar':'Moderada','Esgoto':'Morador disse que tem','Comissão':'Existe','Irrigação':'Briga com o abastecimento'},
   regd:mk([2,1,2,1,1, 2,1,2,2,3,1, 2,2,N,1, 2,2,2]),
   glosas:[{code:'D2.5',txt:'D2.5 = 3 lançada só com relato de morador, sem foto nem registro no campo “resíduos”. Glosada: sai da média.'}]},
- {id:'mandacaru',n:'Mandacaru',reg:'Regional Leste (fictícia)',iet:2,
+ {id:'riachao',n:'Riachão',reg:'Regional Leste (fictícia)',iet:2,
   nom:{'Mata ciliar':'Bem preservada em parte','Lixo':'Pouco','Comissão':'Ativa','Vazante':'Alguma'},
   regd:mk([0,1,0,1,0, 1,0,1,1,0,0, 0,1,1,0, 1,0,2]), glosas:[]}
 ];
 ACUDES.forEach(function(a){ a.aud=a.regd?clone(a.regd):null; if(a.glosas) a.glosas.forEach(function(g){ a.aud[g.code]=null; }); });
 function acude(id){ for(var i=0;i<ACUDES.length;i++) if(ACUDES[i].id===id) return ACUDES[i]; }
 
-/* Fichas já registradas no Jandaia (13 indicadores fora dos casos) */
+/* Fichas já registradas no Pacajus (13 indicadores fora dos casos) */
 var PRE={
  'D1.2':{v:1,obs:'Roçado de milho pequeno dentro da faixa de APP, na margem sudoeste.',ev:'Registro de ocupação + foto nº 07'},
  'D1.3':{v:2,obs:'Cerca de arame com trechos rompidos e porteira caída no acesso norte.',ev:'Campo “cercas/portões”'},

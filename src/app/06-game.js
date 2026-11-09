@@ -35,11 +35,11 @@ function dimFormula(sc,dc){ var it=CODES.filter(function(c){ return dimOf(c)===d
 function intro(){
   G.mode='title'; hud.hidden=true; objEl.hidden=true; CAM.orbit=true; otto.visible=true; otto.material.opacity=1; serras.visible=false; scene.fog.near=600; scene.fog.far=1400;
   $('gload').hidden=true;
-  panel('<span class="k">RPG 3D · IVSH · entrega 1 de 2</span><h3>A Régua das Águas</h3><p>Você é aplicador(a) do <b>IVSH</b>, o índice proposto para medir a vulnerabilidade socioambiental dos açudes da Gerência Metropolitana de Fortaleza.</p><p>Missão: fazer a primeira campanha com a régua no <b>Açude Jandaia</b> e levar a ficha à <b>Mesa da Controladoria</b>, onde ela vira decisão de orçamento.</p><p class="note">Açudes, pessoas, fotos e notas são fictícios. As regras do índice vêm do artigo.</p>'+
+  panel('<span class="k">RPG 3D · IVSH · entrega 1 de 2</span><h3>A Régua das Águas</h3><p>Você é aplicador(a) do <b>IVSH</b>, o índice proposto para medir a vulnerabilidade socioambiental dos açudes da Gerência Metropolitana de Fortaleza.</p><p>Missão: fazer a primeira campanha com a régua no <b>Açude Pacajus</b> e levar a ficha à <b>Mesa da Controladoria</b>, onde ela vira decisão de orçamento.</p><p class="note">Os nomes dos açudes são reais, mas cenário, pessoas, fotos e notas são fictícios. As regras do índice vêm do artigo.</p>'+
     chs([['Começar',startGame,true],['🌿 Modo Escola (piloto)',startKids],['❔ Regras do jogo',function(){ openRules(); }]],true),'glass');
 }
 HOOK.play=function(){ if(G.mode==='title') startGame(); };
-function startGame(){ SFX.start(); SFX.scene('abertura'); resetState(); renderDash(); setHud(); abertura1(); }
+function startGame(){ SFX.start(); SFX.scene('abertura'); if(window.menEvent) menEvent('reset'); resetState(); renderDash(); setHud(); abertura1(); }
 
 /* ---------- ato 0: a COGERH já mede a água (RMQA/IET); o IVSH mede o entorno ---------- */
 function ietLegend(){ return '<div class="tlg">'+IET_CL.map(function(c){ return '<span><i style="background:'+c.c+'"></i>'+c.n+'</span>'; }).join('')+'</div>'; }
@@ -62,15 +62,17 @@ function abertura2(){
   var rows=[['Pergunta','Quanto a água está enriquecida por nutrientes?','Quão vulnerável é o reservatório e seu entorno?'],['Onde olha','Dentro d’água, no ponto de amostragem','Na margem e no entorno do açude'],['Dados','Amostras analisadas em laboratório','Evidência de campo registrada nas fichas'],['Situação','Já existe, em rede, com classificação trimestral','Proposta, para ir na mesma campanha'],['Governança e conflito de uso','Não medidos','Dimensões D3 e D4']];
   panel('<span class="k">Escala do açude · IVSH (proposta)</span><h3>Aqui embaixo, a pergunta muda</h3><p>O barco da RMQA coleta a água; o IET diz como ela está. O IVSH olha o que está em volta, com o que a equipe de campo vê. A ideia do artigo é levar a régua na mesma campanha.</p>'+
     '<div style="overflow-x:auto"><table class="cmp"><thead><tr><th></th><th>IET · COGERH</th><th>IVSH · proposta</th></tr></thead><tbody>'+rows.map(function(r){ return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>'; }).join('')+'</tbody></table></div>'+
-    '<p class="note">O artigo lista como pesquisa futura correlacionar o IVSH com o IET. O jogo não afirma relação entre os dois.</p>'+cont('Entrar no Jandaia',prologo));
+    cont('Entrar no Pacajus',prologo));
 }
 
 /* ---------- ato 1: mundo sem régua ---------- */
-var PRO_A=['carnauba','juazeiro','mandacaru'], IARA_ORD=['carnauba','juazeiro','mandacaru'], BENE_ORD=['juazeiro','carnauba','mandacaru'];
+var PRO_A=['pacoti','gaviao','riachao'], IARA_ORD=['pacoti','gaviao','riachao'], BENE_ORD=['gaviao','pacoti','riachao'];
 function prologo(){
   G.mode='prologo'; releaseCam(); player.position.set(0,0,17.8); player.rotation.y=Math.PI; CAM.boost=1; CAM.z=0.6;
   placeNPC('iara',-1.7,15.0,0,17.8); placeNPC('bene',1.7,15.0,0,17.8);
-  SFX.scene('campo'); G.prolog.order=[]; drawFichas();
+  SFX.scene('campo'); G.prolog.order=[];
+  // o menino entra aqui: pula da régua (que sobe com ele e volta para o fundo), explica as regras e depois fica junto
+  if(typeof MEN!=='undefined'&&MEN){ closePanel(); MEN.intro(function(){ G.mode='prologo'; drawFichas(); }); } else drawFichas();
 }
 function drawFichas(){
   var ord=G.prolog.order;
@@ -83,7 +85,7 @@ function ordTxt(o){ return o.map(function(id){ return acude(id).n; }).join(' ›
 function revealProlog(){
   var me=G.prolog.order, sameI=me.join()===IARA_ORD.join(), sameB=me.join()===BENE_ORD.join();
   panel('<div class="res"><b>Sua ordem:</b> '+ordTxt(me)+'<br><b>Iara:</b> '+ordTxt(IARA_ORD)+'<br><b>Seu Bené:</b> '+ordTxt(BENE_ORD)+'</div>'+
-    npc('iara','“Escassa” é pior que “moderada”, ora. Carnaúba primeiro.')+npc('bene','Pois para mim “moderada” quer dizer desmatamento moderado, e no Juazeiro ainda tem esgoto. Juazeiro primeiro.')+
+    npc('iara','“Escassa” é pior que “moderada”, ora. Pacoti primeiro.')+npc('bene','Pois para mim “moderada” quer dizer desmatamento moderado, e no Gavião ainda tem esgoto. Gavião primeiro.')+
     '<p>'+(sameI||sameB?'Você concordou com '+(sameI?'a Iara':'o Seu Bené')+', mas nenhum de vocês consegue provar a ordem.':'Três pessoas, três ordens.')+' <b>Sem régua, só opinião.</b> E como explicar à comunidade por que um açude recebe recurso e o outro não?</p>'+
     cont('Chamar a régua',chamarRegua),'full');
 }
@@ -94,8 +96,8 @@ function chamarRegua(){
   pts.push([11,10,24]); lks.push([0,-2,0]);
   flyTo(pts,lks,7.5,function(){ toast('A régua chegou ao açude');
     setTimeout(function(){ panel(npc('iara','Agora sim: a régua. Cada indicador tem quatro descritores escritos, de 0 a 3. Zero é a condição mais favorável e três a mais vulnerável, em todos os 18 indicadores.')+
-      '<div class="math">Carnaúba, mata ciliar “Escassa” → descritor 2 da D1.1, “escassa/fragmentada” → <b>nota 2</b></div>'+
-      '<p>Sua vez. Na ficha do Mandacaru, a mata ciliar está “Bem preservada em parte”. Que nota a régua dá?</p>'+
+      '<div class="math">Pacoti, mata ciliar “Escassa” → descritor 2 da D1.1, “escassa/fragmentada” → <b>nota 2</b></div>'+
+      '<p>Sua vez. Na ficha do Riachão, a mata ciliar está “Bem preservada em parte”. Que nota a régua dá?</p>'+
       chs([['0 · contínua e densa',function(){ quiz(0); }],['1 · contínua com clareiras',function(){ quiz(1); }],['Não dá para converter sem foto e descrição',function(){ quiz(2); }]])); },700); },{hold:true,hint:true});
 }
 function quiz(i){
@@ -105,8 +107,8 @@ function quiz(i){
   var same=reg.map(function(r){ return r.id; }).join()===G.prolog.order.join();
   bump({social:10});
   panel(npc('iara',(ok?'Exato. “Em parte” não diz nada sobre continuidade e densidade: pode ser 1, pode ser 2. ':'Pode ser 1, pode ser 2: “em parte” não diz nada sobre continuidade e densidade. ')+'Sem foto e descrição, não dá para converter. Por isso as regionais voltaram a campo com a régua e refizeram as fichas.')+
-    '<div class="res">Fichas refeitas com a régua: '+reg.map(function(r){ return '<b>'+r.n+' '+fmt(r.v)+'</b>'; }).join(' · ')+'. Falta o Jandaia: é a sua campanha. '+(same?'Sua ordem do começo coincidiu com a da régua, mas agora ela tem conta e evidência por trás.':'A ordem da régua difere da sua: agora existe conta e evidência para discutir.')+'</div>'+
-    '<p class="note">Veja o painel ao lado: o ranking agora tem números. São valores registrados, ainda não auditados.</p>'+cont('Começar a campanha no Jandaia',startCampaign));
+    '<div class="res">Fichas refeitas com a régua: '+reg.map(function(r){ return '<b>'+r.n+' '+fmt(r.v)+'</b>'; }).join(' · ')+'. Falta o Pacajus: é a sua campanha. '+(same?'Sua ordem do começo coincidiu com a da régua, mas agora ela tem conta e evidência por trás.':'A ordem da régua difere da sua: agora existe conta e evidência para discutir.')+'</div>'+
+    '<p class="note">Veja o painel ao lado: o ranking agora tem números. São valores registrados, ainda não auditados.</p>'+cont('Começar a campanha no Pacajus',startCampaign));
 }
 
 /* ---------- ato 2: campanha de campo ---------- */
@@ -119,19 +121,19 @@ function startCampaign(){
   CAM.z=0; CAM.boost=0; CAM.desired(); var a0=Math.atan2(camera.position.z,camera.position.x), pts=[], lks=[];
   for(var i=1;i<=9;i++){ var a=a0+i/9*Math.PI*1.75, r=28-i*0.3, h=14+Math.sin(i/9*Math.PI)*7; pts.push([Math.cos(a)*r,h,Math.sin(a)*r]); lks.push([0,0.5,0]); }
   pts.push([CAM.pd.x,CAM.pd.y,CAM.pd.z]); lks.push([CAM.ld.x,CAM.ld.y,CAM.ld.z]);
-  toast('Campanha 1 · Açude Jandaia · 13 fichas já registradas, 5 casos com você');
-  flyTo(pts,lks,8,function(){ G.mode='explore'; showObj(); },{hint:false});
+  toast('Campanha 1 · Açude Pacajus · 13 fichas já registradas, 5 casos com você');
+  flyTo(pts,lks,8,function(){ function go(){ G.mode='explore'; showObj(); } if(typeof MEN!=='undefined'&&MEN&&MEN.st==='off') MEN.intro(go); else go(); },{hint:false});   // normalmente ele já entrou no prólogo
 }
 function showObj(){
   if(G.mode!=='explore'){ objEl.hidden=true; return; }
   objEl.hidden=false; var h;
   if(G.caseI<CASES.length){ var c=CASES[G.caseI]; h='<span><b>Caso '+(G.caseI+1)+'/5 · '+c.t+'</b><br>'+c.code+' · '+c.place+'</span>'+btn('Ir até lá',function(){ walkTo(c.p.x,c.p.z,true); },'');
-  } else h='<span><b>Ficha completa</b><br>18 indicadores registrados no Jandaia</span>'+btn('Fechar a ficha',fecharFicha,'');
+  } else h='<span><b>Ficha completa</b><br>18 indicadores registrados no Pacajus</span>'+btn('Fechar a ficha',fecharFicha,'');
   objEl.innerHTML=h; var P=PEND; PEND={}; Array.prototype.forEach.call(objEl.querySelectorAll('[data-h]'),function(el){ el.addEventListener('click',function(){ SFX.click(); P[el.getAttribute('data-h')](); }); });
 }
 function openFicha(code){
   var p=PRE[code]; if(!p) return; G.mode='dialog'; objEl.hidden=true; G.target=null; var v=G.sc[code];
-  panel('<span class="k">Ficha já registrada · Jandaia</span><div class="ihead"><span class="code">'+code+'</span><span class="nm">'+IX[code][1]+'</span><span class="sn">nota '+(v==null?'s/r':v)+'</span></div>'+
+  panel('<span class="k">Ficha já registrada · Pacajus</span><div class="ihead"><span class="code">'+code+'</span><span class="nm">'+IX[code][1]+'</span><span class="sn">nota '+(v==null?'s/r':v)+'</span></div>'+
     '<p><b>Observação:</b> '+p.obs+'</p><p class="idef"><b>Evidência:</b> '+p.ev+'.</p>'+rulerShow(code,v,v).replace(/<p class="note">.*<\/p>/,'')+cont('Fechar',function(){ closePanel(); G.mode='explore'; showObj(); }));
 }
 function openCase(){ G.mode='dialog'; objEl.hidden=true; var c=CASES[G.caseI]; G.cur=c.code; renderDash(); [case1,case2,case3,case4,case5][G.caseI](); }
@@ -142,7 +144,7 @@ function finishCase(){
   G.mode='explore'; closePanel();
   if(G.caseI<CASES.length){ placeBeam(CASES[G.caseI].p.x,CASES[G.caseI].p.z); toast('Caso '+(G.caseI+1)+' de 5: '+CASES[G.caseI].t); }
   else { hideBeam(); toast('Os 18 indicadores estão registrados'); SFX.good(); }
-  showObj(); setHud();
+  showObj(); setHud(); if(window.menEvent) menEvent('case');
 }
 
 /* caso 1 · a régua (D1.1) */
@@ -222,7 +224,7 @@ function case5(){
 function fecharFicha(){
   G.mode='dialog'; objEl.hidden=true; G.closed=true; renderDash();
   var r=calc(G.sc);
-  panel('<span class="k">Ficha do Açude Jandaia (fictício)</span><h3>Do indicador à faixa</h3>'+
+  panel('<span class="k">Ficha do Açude Pacajus (cenário fictício)</span><h3>Do indicador à faixa</h3>'+
     DIMS.map(function(d){ return '<div class="math">'+dimFormula(G.sc,d.c)+' <span style="color:var(--muted)">· '+d.n+'</span></div>'; }).join('')+
     '<div class="math">IVSH = ('+r.dims.map(function(d){ return fmt(d.mean); }).join(' + ')+') / 4 = <b>'+fmt(r.ivsh)+'</b> → faixa <b>'+(r.fx?r.fx.n:'—')+'</b></div>'+
     '<p class="note">Pesos iguais no cenário-base, como no artigo. Faixa por intervalos iguais da escala (convenção do jogo).</p>'+cont('Acender o farol da faixa',acender),'full');
@@ -232,5 +234,5 @@ function acender(){
   farolMat.color.setHex(hex); farolRing.material.color.setHex(hex); farol.visible=true;
   buildRadar(r.dims.map(function(d){ return d.mean; }),hex); radar.visible=true; SFX.fanfare(false);
   flyTo([[15,3,12],[10,8,-8],[-9,13,-9],[-13,18,7],[14,25,23]],[[0,3,0],[0,7,0],[0,12,0],[0,13,0],[0,3.5,0]],7.5,function(){ setTimeout(function(){
-    panel('<span class="k">Jandaia · IVSH '+fmt(r.ivsh)+' · faixa '+(r.fx?r.fx.n:'—')+'</span><p>O farol mostra a faixa; o losango acima do açude mostra o perfil das quatro dimensões. Mesmo IVSH, perfis diferentes pedem ações diferentes.</p><p>Agora a ficha vai para a <b>Mesa da Controladoria</b>. Lá, nota sem evidência não passa.</p>'+cont('Ir à Mesa da Controladoria',startMesa)); },500); },{hold:true});
+    panel('<span class="k">Pacajus · IVSH '+fmt(r.ivsh)+' · faixa '+(r.fx?r.fx.n:'—')+'</span><p>O farol mostra a faixa; o losango acima do açude mostra o perfil das quatro dimensões. Mesmo IVSH, perfis diferentes pedem ações diferentes.</p><p>Agora a ficha vai para a <b>Mesa da Controladoria</b>. Lá, nota sem evidência não passa.</p>'+cont('Ir à Mesa da Controladoria',startMesa)); },500); },{hold:true});
 }

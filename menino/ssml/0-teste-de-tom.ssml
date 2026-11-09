@@ -1,0 +1,10 @@
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="pt-BR">
+<voice name="pt-BR-AntonioNeural">Opção A.</voice>
+<voice name="pt-BR-LeticiaNeural"><break time="300ms"/><prosody pitch="+0%" rate="+0%">Ops… tô bem, tô bem! Foi só um tombinho. Eu sou o Juninho, moro aqui na beira do Pacajus. Vem cá, deixa eu te explicar a regra dessa parada!</prosody><break time="1200ms"/></voice>
+<voice name="pt-BR-AntonioNeural">Opção B.</voice>
+<voice name="pt-BR-LeticiaNeural"><break time="300ms"/><prosody pitch="-5%" rate="+4%">Ops… tô bem, tô bem! Foi só um tombinho. Eu sou o Juninho, moro aqui na beira do Pacajus. Vem cá, deixa eu te explicar a regra dessa parada!</prosody><break time="1200ms"/></voice>
+<voice name="pt-BR-AntonioNeural">Opção C.</voice>
+<voice name="pt-BR-LeticiaNeural"><break time="300ms"/><prosody pitch="-10%" rate="+4%">Ops… tô bem, tô bem! Foi só um tombinho. Eu sou o Juninho, moro aqui na beira do Pacajus. Vem cá, deixa eu te explicar a regra dessa parada!</prosody><break time="1200ms"/></voice>
+<voice name="pt-BR-AntonioNeural">Opção D.</voice>
+<voice name="pt-BR-LeticiaNeural"><break time="300ms"/><prosody pitch="+6%" rate="+8%">Ops… tô bem, tô bem! Foi só um tombinho. Eu sou o Juninho, moro aqui na beira do Pacajus. Vem cá, deixa eu te explicar a regra dessa parada!</prosody><break time="1200ms"/></voice>
+</speak>

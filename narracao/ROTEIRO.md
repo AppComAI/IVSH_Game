@@ -16,7 +16,7 @@ Duração-alvo: cerca de 60 a 70 segundos (estimada para uma leitura calma). Tom
 >
 > Uma dica: nota sem evidência não vale. [pausa]
 >
-> Os açudes e os dados deste jogo são fictícios, para treino.
+> Os nomes dos açudes são reais, mas o cenário e os dados deste jogo são fictícios, para treino.
 >
 > Agora é com você. Boa campanha!
 

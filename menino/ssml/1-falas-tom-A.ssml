@@ -1,0 +1,27 @@
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="pt-BR">
+<voice name="pt-BR-LeticiaNeural">
+<!-- Falas 01 a 22 do Juninho, tom A: natural, como a Letícia é. Não apague as pausas de 2 s: é por elas que eu separo as falas. -->
+<prosody pitch="+0%" rate="+0%">Ô de casa! Olha eu aqui em cima!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Eitaa!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Ops… tô bem, tô bem! Foi só um tombinho.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Eu sou o Juninho, moro aqui na beira do Pacajus. Vem cá, deixa eu te explicar a regra dessa parada!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">É assim: tem cinco casos em volta do açude. A luz azul mostra qual é o próximo.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Pra andar, é só tocar no chão. Ou aperta “Ir até lá”, que vai direitinho.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Em cada caso, você conversa com o povo, tira foto e dá a nota na régua: zero é tudo bem, três é coisa séria.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Mas presta atenção: não viu, não chuta! Se não tem prova, marca “sem registro”.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Esses balõezinhos azuis são fichas que o pessoal já fez. Toca neles pra espiar.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">No fim, a gente leva tudo pra Mesa da Controladoria. Lá a doutora confere nota por nota. E nota sem prova ela corta, viu?</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Entendeu? Então bora! Vamos juntos!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Ô água boa, ô água limpa, cuida do açude que o açude cuida da gente!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Pula, pula, pé de juá, quem cuida da margem não deixa a terra escorregar!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Lá rá rá rá… tchu ru ru…</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Chegamos! Vai lá, que eu fico aqui olhando.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Ei, bora! A luz azul tá chamando a gente!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Que foto massa! Prova boa é assim.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Uhuu! Olha o pulo!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Eita, quase caio de novo!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Pronto, ficha completa! Agora é a doutora da Mesa que confere.</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Fica tranquila: nota com prova passa!</prosody><break time="2000ms"/>
+<prosody pitch="+0%" rate="+0%">Foi massa andar contigo! Até a próxima campanha!</prosody><break time="2000ms"/>
+</voice>
+</speak>

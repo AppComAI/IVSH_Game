@@ -3,7 +3,7 @@ function ivReg(a){ return calc(a.me?G.sc:a.regd).ivsh; }
 function scAud(a){ return a.me?G.audJ:a.aud; }
 function ivAud(a){ return calc(scAud(a)).ivsh; }
 function startMesa(){
-  closePanel(); G.mode='mesa'; hideBeam(); objEl.hidden=true; showMarkers(false); SFX.scene('mesa');
+  closePanel(); G.mode='mesa'; hideBeam(); objEl.hidden=true; showMarkers(false); SFX.scene('mesa'); if(window.menEvent) menEvent('mesa');
   ['iara','ze','lucia','bene'].forEach(hideNPC);
   player.position.set(MESA.x-1.5,0,MESA.z-2.3); player.rotation.y=0.25;
   placeNPC('rastro',MESA.x+0.3,MESA.z+1.0,MESA.x-1.5,MESA.z-2.3);
@@ -13,33 +13,33 @@ function startMesa(){
     panel(npc('rastro','Bem-vindo à Mesa da Controladoria. Aqui o índice vira decisão, e por isso eu audito antes. Três perguntas para cada nota: tem evidência mínima? A regra de ausência foi respeitada? Algum fato foi contado duas vezes?')+
       '<p class="note">Os pilares mostram o IVSH registrado de cada açude, antes da auditoria.</p>'+cont('Auditar as quatro fichas',audit)); },{hold:true});
 }
-function auditJandaia(){
+function auditPacajus(){
   var sc=clone(G.sc), it=[], gl=0;
   function ok(w,t){ it.push({ok:true,w:w,t:t}); } function glo(w,t){ it.push({ok:false,w:w,t:t}); gl++; }
-  ok('Jandaia · D1.1','Foto e descrição anexadas. A nota 2 se sustenta.');
-  if((G.meta['D2.5']||{}).flag==='relato'){ sc['D2.5']=null; glo('Jandaia · D2.5','Nota 3 lançada só com relato de morador, sem foto nem registro no campo “resíduos”. Glosada: sai da média. O valor real ficou desconhecido.'); }
-  else ok('Jandaia · D2.5','Foto anexada. Ela sustenta 1 (lixo disperso), e não o 3 do relato.');
-  if((G.meta['D3.1']||{}).flag==='semdoc'){ sc['D3.1']=null; glo('Jandaia · D3.1','Nota '+G.sc['D3.1']+' sem ata, portaria nem data da última reunião. Glosada: vira sem registro.'); }
-  else ok('Jandaia · D3.1','Sem evidência mínima, o item ficou fora da média. Regra de ausência bem aplicada.');
+  ok('Pacajus · D1.1','Foto e descrição anexadas. A nota 2 se sustenta.');
+  if((G.meta['D2.5']||{}).flag==='relato'){ sc['D2.5']=null; glo('Pacajus · D2.5','Nota 3 lançada só com relato de morador, sem foto nem registro no campo “resíduos”. Glosada: sai da média. O valor real ficou desconhecido.'); }
+  else ok('Pacajus · D2.5','Foto anexada. Ela sustenta 1 (lixo disperso), e não o 3 do relato.');
+  if((G.meta['D3.1']||{}).flag==='semdoc'){ sc['D3.1']=null; glo('Pacajus · D3.1','Nota '+G.sc['D3.1']+' sem ata, portaria nem data da última reunião. Glosada: vira sem registro.'); }
+  else ok('Pacajus · D3.1','Sem evidência mínima, o item ficou fora da média. Regra de ausência bem aplicada.');
   var f=(G.meta['D1.2']||{}).flag;
-  if(f==='dupla'){ sc['D1.2']=PRE['D1.2'].v; glo('Jandaia · D1.2 × D2.3','Dupla contagem: o gado na água estava em D2.3 e em D1.2. Pelo mecanismo principal, fica só em D2.3. A D1.2 volta ao registro do roçado (1).'); }
-  else if(f==='reclass'){ sc['D1.2']=PRE['D1.2'].v; sc['D2.3']=3; glo('Jandaia · D1.2 → D2.3','Gado com acesso direto à água e dejetos é criação de animais (D2.3 = 3, pela foto), e não uso do solo da APP. Reclassificado; a D1.2 volta ao registro do roçado (1).'); }
-  else ok('Jandaia · D2.3','Um fato, um indicador: mecanismo principal respeitado.');
-  ok('Jandaia · D2.1','Nota calibrada pelo descritor “estruturas permanentes”, com foto.');
-  ok('Jandaia · 13 fichas já registradas','Todas com evidência mínima.');
+  if(f==='dupla'){ sc['D1.2']=PRE['D1.2'].v; glo('Pacajus · D1.2 × D2.3','Dupla contagem: o gado na água estava em D2.3 e em D1.2. Pelo mecanismo principal, fica só em D2.3. A D1.2 volta ao registro do roçado (1).'); }
+  else if(f==='reclass'){ sc['D1.2']=PRE['D1.2'].v; sc['D2.3']=3; glo('Pacajus · D1.2 → D2.3','Gado com acesso direto à água e dejetos é criação de animais (D2.3 = 3, pela foto), e não uso do solo da APP. Reclassificado; a D1.2 volta ao registro do roçado (1).'); }
+  else ok('Pacajus · D2.3','Um fato, um indicador: mecanismo principal respeitado.');
+  ok('Pacajus · D2.1','Nota calibrada pelo descritor “estruturas permanentes”, com foto.');
+  ok('Pacajus · 13 fichas já registradas','Todas com evidência mínima.');
   return {sc:sc,items:it,gl:gl};
 }
 function audit(){
   G.before=ACUDES.map(function(a){ return {a:a,v:ivReg(a)}; });
-  var A=auditJandaia(); G.audJ=A.sc; G.glosas=A.gl; G.audited=true;
+  var A=auditPacajus(); G.audJ=A.sc; G.glosas=A.gl; G.audited=true;
   G.dec.push(!!G.rule.c2,!!G.rule.c3,!!G.rule.c4);
   var f=(G.meta['D1.2']||{}).flag; if(f==='dupla'||f==='reclass') bump({rast:-10});
   if(A.gl===0) bump({xp:30,social:10}); setHud(); renderDash();
   var items=A.items.slice();
-  items.push({ok:true,w:'Carnaúba',t:'Fichas com evidência mínima. Sem glosas.'});
+  items.push({ok:true,w:'Pacoti',t:'Fichas com evidência mínima. Sem glosas.'});
   ACUDES.forEach(function(a){ (a.glosas||[]).forEach(function(g){ items.push({ok:false,w:a.n+' · '+g.code,t:g.txt}); }); });
-  items.push({ok:true,w:'Mandacaru',t:'Fichas com evidência mínima. Sem glosas.'});
-  panel(npc('rastro',A.gl===0?'Suas notas têm lastro. Nenhuma glosa no Jandaia.':'Encontrei '+A.gl+(A.gl===1?' problema':' problemas')+' na sua ficha. Nota sem lastro não entra na conta.')+
+  items.push({ok:true,w:'Riachão',t:'Fichas com evidência mínima. Sem glosas.'});
+  panel(npc('rastro',A.gl===0?'Suas notas têm lastro. Nenhuma glosa no Pacajus.':'Encontrei '+A.gl+(A.gl===1?' problema':' problemas')+' na sua ficha. Nota sem lastro não entra na conta.')+
     '<ul class="alist">'+items.map(function(x,i){ return '<li style="animation-delay:'+(i*0.09)+'s"><span class="st '+(x.ok?'ok':'gl')+'">'+(x.ok?'ok':'glosa')+'</span><span><b>'+x.w+'.</b> '+x.t+'</span></li>'; }).join('')+'</ul>'+
     cont('Ver o ranking auditado',showRank),'full');
   var ng=items.filter(function(x){ return !x.ok; }).length; for(var i=0;i<ng;i++) setTimeout(SFX.stamp,300+i*380);
@@ -57,7 +57,7 @@ function showRank(){
     var rows=aft.map(function(id,k){ var a=acude(id), b=G.before.filter(function(r){ return r.a===a; })[0].v, v=ivAud(a), fx=faixa(v);
       return '<tr><td>'+(k+1)+'º · '+a.n+'</td><td>'+fmt(b)+'</td><td><b>'+fmt(v)+'</b></td><td><span class="fx '+fx.k+'">'+fx.n+'</span></td></tr>'; }).join('');
     panel('<span class="k">Ranking auditado</span><p>'+flip+'</p><div style="overflow-x:auto"><table class="cmp"><thead><tr><th>Açude</th><th>Registrado</th><th>Auditado</th><th>Faixa</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
-      (G.meta['D2.5']&&G.meta['D2.5'].flag==='relato'?'<p class="note">No Jandaia, o D2.5 lançado por relato saiu da conta: sem a foto, o valor real ficou desconhecido.</p>':'')+cont('Distribuir o orçamento',budget)); },1300);
+      (G.meta['D2.5']&&G.meta['D2.5'].flag==='relato'?'<p class="note">No Pacajus, o D2.5 lançado por relato saiu da conta: sem a foto, o valor real ficou desconhecido.</p>':'')+cont('Distribuir o orçamento',budget)); },1300);
 }
 
 /* orçamento */
@@ -116,7 +116,7 @@ function relatorio(){
   flyTo([[-4,15,MESA.z-8],[-17,12,9],[-4,16,-21],[17,14,-4],[16,13,20]],[[0,4,MESA.z],[0,4,0],[0,6,0],[0,6,0],[0,5,0]],8,relatorio2,{hold:true,hint:true});
 }
 function relatorio2(){
-  G.mode='end'; setTimeout(function(){ SFX.fanfare(true); },300);
+  G.mode='end'; setTimeout(function(){ SFX.fanfare(true); },300); if(window.menEvent) menEvent('end');
   var xpb=Math.round(G.eff*0.8); bump({xp:xpb});
   var rp=reguaPct()||0, j=calc(G.audJ);
   var title=(G.glosas===0&&rp>=80&&G.eff>=85&&G.social>=60)?'Régua de Ouro':((G.glosas<=1&&rp>=50)?'Aplicador(a) Rastreável':'Aprendiz do Achismo');
@@ -124,7 +124,7 @@ function relatorio2(){
   var used=spent();
   var lessons=[['A régua',G.dec[1]],['Evidência mínima',!!G.rule.c2],['Regra de ausência',!!G.rule.c3],['Mecanismo principal',!!G.rule.c4],['Concordância',G.dec[G.dec.length-4]]];
   panel('<span class="k">Relatório de prestação de contas · campanha 1</span><h3>Seu título</h3><div class="title-badge">'+title+'</div><p>'+why+'</p>'+
-    '<div class="sum"><span>IVSH Jandaia (auditado)<b>'+fmt(j.ivsh)+' · '+j.fx.n+'</b></span><span>Glosas na sua ficha<b>'+G.glosas+'</b></span><span>Régua (decisões certas de primeira)<b>'+rp+'%</b></span><span>Rastreabilidade<b>'+cl(G.rast)+'</b></span><span>Controle social<b>'+cl(G.social)+'</b></span>'+
+    '<div class="sum"><span>IVSH Pacajus (auditado)<b>'+fmt(j.ivsh)+' · '+j.fx.n+'</b></span><span>Glosas na sua ficha<b>'+G.glosas+'</b></span><span>Régua (decisões certas de primeira)<b>'+rp+'%</b></span><span>Rastreabilidade<b>'+cl(G.rast)+'</b></span><span>Controle social<b>'+cl(G.social)+'</b></span>'+
     '<span>Orçamento usado<b>'+brl(used)+'</b></span><span>Eficiência da alocação<b>'+G.eff+'%</b></span><span>XP<b>'+G.xp+'</b></span></div>'+
     '<p class="note">Eficiência: redução de IVSH ponderada pela faixa (crítica 3, alta 2, moderada 1, baixa 0,5), comparada com a melhor combinação possível dentro de '+brl(BUDGET)+'. Critério do jogo; na vida real entram também prazos, viabilidade e custo de manutenção.</p>'+
     '<p class="note">Repare na tabela do orçamento: um ponto a menos em D3 ou D4 derruba mais o IVSH do que em D1 ou D2. Com pesos iguais por dimensão, cada item de D4 (3 indicadores) vale 1/12 do índice; cada item de D2 (6 indicadores), 1/24. É o tema do laboratório de pesos da entrega 2.</p>'+
