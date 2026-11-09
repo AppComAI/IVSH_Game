@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>A Régua das Águas</title>
-<meta name="description" content="RPG 3D educativo sobre o IVSH, Índice de Vulnerabilidade Socioambiental de Sistemas Hídricos proposto para a Gerência Metropolitana de Fortaleza. Açudes e dados fictícios.">
+<meta name="description" content="RPG 3D educativo sobre o IVSH, Índice de Vulnerabilidade Socioambiental de Sistemas Hídricos proposto para a Gerência Metropolitana de Fortaleza. Nomes de açudes reais; cenário e dados fictícios.">
 <style>
 /*__FONTS__*/
 :root{
@@ -56,6 +56,9 @@ h1 em{font-style:normal;color:var(--accent)}
 .sub{margin:8px 0 0;color:var(--muted);max-width:70ch}
 .sub b{color:var(--fg);font-weight:600}
 .banner{display:inline-flex;gap:8px;align-items:center;font:700 13px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;background:var(--warn-soft);color:var(--warn);border:1px solid currentColor;border-radius:999px;padding:5px 12px;white-space:nowrap}
+.topr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.artlink{display:inline-flex;align-items:center;font:700 13px var(--font-cond);letter-spacing:.06em;text-transform:uppercase;color:#1F4FD1;border:1px solid currentColor;border-radius:999px;padding:5px 12px;text-decoration:none;white-space:nowrap;background:#fff}
+.artlink:hover{background:#EEF3FF}
 .banner i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
 /* grade */
 .grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:start}
@@ -383,13 +386,13 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
       <h1>A Régua <em>das Águas</em></h1>
       <p class="sub">Um RPG 3D sobre transformar o que se vê no açude em nota auditável. Gamificação da proposta <b>“Índice de Vulnerabilidade Socioambiental de Sistemas Hídricos (IVSH) para a Gerência Metropolitana de Fortaleza”</b>.</p>
     </div>
-    <span class="banner" title="Esta é a primeira de duas entregas"><i></i>Prévia · entrega 1 de 2 · açudes e dados fictícios</span>
+    <div class="topr"><a class="artlink" href="Artigo_IVSH.pdf" target="_blank" rel="noopener" title="Abre o artigo em PDF, que deve estar na mesma pasta">Ler o artigo (PDF)</a><span class="banner" title="Esta é a primeira de duas entregas"><i></i>Prévia · entrega 1 de 2 · nomes reais, dados fictícios</span></div>
   </header>
 
   <div class="grid">
     <div class="col">
       <section class="card" aria-labelledby="h-flow">
-        <div class="chd"><h2 id="h-flow">Do campo ao índice</h2><span class="tag" id="flowtag">Açude Jandaia · fictício</span></div>
+        <div class="chd"><h2 id="h-flow">Do campo ao índice</h2><span class="tag" id="flowtag">Açude Pacajus · cenário fictício</span></div>
         <ol class="steps" id="steps">
           <li data-s="0">1 · Indicador<span>nota 0–3 com evidência</span></li>
           <li data-s="1">2 · Dimensão<span>média dos itens válidos</span></li>
@@ -397,7 +400,7 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
           <li data-s="3">4 · Faixa<span>baixa a crítica</span></li>
         </ol>
         <div id="flowgrid" aria-live="polite"></div>
-        <div class="ivbox"><div class="ivnum" id="ivnum">—</div><div class="ivmeta"><span class="fx" id="ivfx">aguardando</span><small id="ivnote">A ficha do Jandaia começa na campanha de campo.</small></div></div>
+        <div class="ivbox"><div class="ivnum" id="ivnum">—</div><div class="ivmeta"><span class="fx" id="ivfx">aguardando</span><small id="ivnote">A ficha do Pacajus começa na campanha de campo.</small></div></div>
         <div class="scale" id="scale" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
         <div class="sticks" aria-hidden="true"><span>0</span><span>0,75</span><span>1,50</span><span>2,25</span><span>3</span></div>
         <div class="legend"><span class="cell s0"><b>0</b></span>mais favorável <span class="cell s3"><b>3</b></span>mais vulnerável <span class="cell na"></span>sem registro (fora da média) <span class="cell pend"></span>pendente</div>
@@ -419,7 +422,7 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
         <div class="chd"><h2 id="h-notes">O que é do artigo e o que é do jogo</h2></div>
         <ul class="notes">
           <li><b>Do artigo:</b> 4 dimensões, 18 indicadores, escala 0–3, evidência mínima, regra de ausência, mecanismo principal, média dos itens válidos e pesos iguais.</li>
-          <li><b>Do jogo:</b> açudes, pessoas, fotos e notas são fictícios; os cortes das faixas e os efeitos das intervenções no orçamento são convenções ilustrativas.</li>
+          <li><b>Do jogo:</b> os nomes dos açudes são reais, mas cenário, pessoas, fotos e notas são fictícios; os cortes das faixas e os efeitos das intervenções no orçamento são convenções ilustrativas.</li>
           <li>O índice é uma proposta, ainda não aplicada nem validada. O jogo não descreve a situação real de nenhum açude.</li>
         </ul>
       </section>
@@ -429,11 +432,11 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
       <section class="card gamecard" aria-labelledby="h-game">
         <div class="chd"><h2 id="h-game">Campanha de campo (RPG 3D)</h2><span class="tag">clique no chão para andar · “Ir até lá” leva ao próximo caso</span></div>
         <div class="gamebox" id="gamebox">
-          <canvas id="gl" aria-label="Cena 3D do açude Jandaia (fictício)"></canvas>
+          <canvas id="gl" aria-label="Cena 3D do açude Pacajus (cenário fictício)"></canvas>
           <div class="loading" id="gload">carregando o açude…</div>
           <div class="hud" id="hud" hidden></div>
           <div class="obj" id="obj" hidden></div>
-          <div class="gtools"><button type="button" id="gvote" title="Votação da turma por QR code" aria-label="Votação da turma por QR code">🗳</button><button type="button" id="gsala" class="gsala" aria-pressed="false" title="Modo sala de aula: sem música, efeitos baixos">SALA</button><button type="button" id="grules" title="Regras do jogo" aria-label="Regras do jogo">?</button><button type="button" id="gsound" aria-pressed="true" title="Desligar o som" aria-label="Som">🔊</button><button type="button" id="gfull" title="Ampliar" aria-label="Ampliar">⛶</button></div>
+          <div class="gtools"><button type="button" id="gvote" title="Votação da turma por QR code" aria-label="Votação da turma por QR code">🗳</button><button type="button" id="gsala" class="gsala" aria-pressed="false" title="Modo sala de aula: sem música, efeitos baixos">SALA</button><button type="button" id="grules" title="Regras do jogo" aria-label="Regras do jogo">?</button><button type="button" id="gmen" aria-pressed="true" title="Silenciar o menino" aria-label="Voz e cantoria do menino" hidden>🧒</button><button type="button" id="gsound" aria-pressed="true" title="Desligar o som" aria-label="Som">🔊</button><button type="button" id="gfull" title="Ampliar" aria-label="Ampliar">⛶</button></div>
           <div class="flash" id="flash"></div>
           <div class="dlg center" id="dlg" hidden></div>
           <div class="zoomctl" aria-label="Zoom da câmera"><button type="button" id="zin" title="Aproximar" aria-label="Aproximar">+</button><button type="button" id="zout" title="Afastar" aria-label="Afastar">−</button><button type="button" id="zmap" title="Ver o mapa todo" aria-label="Ver o mapa todo">⤢</button><button type="button" id="zauto" class="zauto" aria-pressed="true" title="Zoom automático ao chegar nos casos: ligado">AUTO</button></div>
@@ -507,7 +510,8 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
           <li>Duração: cerca de 20 minutos (estimativa).</li>
           <li>O painel ao lado mostra o índice se formando, do indicador à faixa.</li>
           <li>Botões no canto do jogo: <b>SALA</b> (sem música), <b>?</b> (regras), som e tela cheia.</li>
-          <li>Açudes, pessoas e notas são fictícios; o IVSH ainda não foi validado.</li>
+          <li>Nomes de açudes reais; cenário, pessoas e notas fictícios. O IVSH ainda não foi validado.</li>
+          <li>O artigo que propõe o IVSH: <a href="Artigo_IVSH.pdf" target="_blank" rel="noopener">Artigo_IVSH.pdf</a> (precisa estar na mesma pasta do jogo).</li>
           <li>Tem óculos de realidade virtual? Abra a <a href="vr.html">demo de RV</a>.</li>
         </ul></section>
       </div>
@@ -533,14 +537,14 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
     </nav>
     <div class="rbody">
       <section class="rpane" id="r1">
-        <p>Você é aplicador(a) do IVSH e vai fazer a primeira campanha com a régua no <b>Açude Jandaia</b> (fictício). O jogo tem quatro momentos:</p>
+        <p>Você é aplicador(a) do IVSH e vai fazer a primeira campanha com a régua no <b>Açude Pacajus</b> (cenário fictício). O jogo tem quatro momentos:</p>
         <ol class="rlist">
           <li><b>Abertura.</b> Do alto, a rede de qualidade da água da COGERH (RMQA) e o IET, que ela já calcula. Ao descer até o açude, a pergunta do IVSH.</li>
           <li><b>Mundo sem régua.</b> Três fichas antigas, escritas cada uma de um jeito. Ordenar os açudes vira questão de opinião, até a régua aparecer.</li>
           <li><b>Campanha de campo.</b> Cinco casos, cada um ensinando uma regra do índice. Os outros 13 indicadores já estão registrados em fichas espalhadas pelo mapa.</li>
           <li><b>Mesa da Controladoria.</b> A auditoria confere as fichas, o ranking pode mudar e você distribui um orçamento entre os quatro açudes.</li>
         </ol>
-        <p class="rnote">Açudes, pessoas, fotos e notas são fictícios. Esta é a entrega 1 de 2.</p>
+        <p class="rnote">Os nomes dos açudes são reais; cenário, pessoas, fotos e notas são fictícios. Esta é a entrega 1 de 2.</p>
       </section>
       <section class="rpane" id="r2" hidden>
         <ul class="rlist">
@@ -548,7 +552,7 @@ kbd{font:600 12px var(--font-body);border:1px solid var(--line);border-bottom-wi
           <li><b>Fichas no mapa:</b> clique nos marcadores azuis com código (por exemplo, D1.3) para ler o registro já feito.</li>
           <li><b>Câmera:</b> <kbd>+</kbd> e <kbd>−</kbd> aproximam e afastam; <kbd>⤢</kbd> mostra o mapa todo; <b>AUTO</b> liga ou desliga a aproximação ao chegar nos casos. Em tela cheia, ou com <kbd>Ctrl</kbd>, a rodinha do mouse também dá zoom.</li>
           <li><b>Tela cheia:</b> <kbd>⛶</kbd>; <kbd>Esc</kbd> sai. O som tem botão próprio e fica salvo neste navegador.</li>
-          <li><b>Painel ao lado:</b> mostra a ficha do Jandaia se formando, do indicador à faixa. Clique numa célula para ver a régua daquele indicador.</li>
+          <li><b>Painel ao lado:</b> mostra a ficha do Pacajus se formando, do indicador à faixa. Clique numa célula para ver a régua daquele indicador.</li>
         </ul>
       </section>
       <section class="rpane" id="r3" hidden>

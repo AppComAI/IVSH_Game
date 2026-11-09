@@ -1,0 +1,35 @@
+VOZ DA LETÍCIA (Microsoft Azure) PARA O JUNINHO
+=================================================
+
+Arquivos deste pacote
+- 0-teste-de-tom.ssml ..... a mesma frase em 4 tons (A, B, C, D), anunciados por outra voz. Serve para escolher.
+- 1-falas-tom-A.ssml ...... as 22 falas do menino, tom A (natural, como a Letícia é)
+- 1-falas-tom-B.ssml ...... tom B (um pouco mais grave)
+- 1-falas-tom-C.ssml ...... tom C (mais grave, mais "menino")
+- 1-falas-tom-D.ssml ...... tom D (mais agudo e mais rápido, mais criança)
+- 2-narracao.ssml ......... opcional: narração de boas-vindas, com a voz adulta Francisca
+
+Passo a passo
+1. Ouça antes, sem conta: Voice Gallery da Microsoft (https://speech.microsoft.com/portal/voicegallery).
+   Filtre Portuguese (Brazil) e ouça a Letícia. Se não servir para um menino, pare aqui: a saída é gravar.
+2. Crie a conta no Azure e um recurso de Fala (Speech) no tipo de preço gratuito F0.
+   Região: prefira East US. Em 2022 a Letícia só existia em algumas regiões (East US, West Europe,
+   Southeast Asia); não consegui confirmar se isso mudou.
+3. Abra o Speech Studio, entre em Audio Content Creation e escolha o seu recurso de Fala.
+   (A mesma ferramenta também existe no portal Microsoft Foundry.)
+4. Crie um arquivo novo, mude o editor para SSML e cole o conteúdo de 0-teste-de-tom.ssml.
+   Ouça as opções A, B, C e D e escolha uma.
+5. Crie outro arquivo e cole o 1-falas-tom-X.ssml da letra escolhida.
+   Não apague as pausas de 2 segundos (<break time="2000ms"/>): é por elas que eu separo as falas.
+6. Exporte o áudio (MP3 ou WAV) e baixe.
+7. Opcional: faça o mesmo com 2-narracao.ssml.
+8. Me mande o(s) arquivo(s). Eu corto nas 22 falas, igualo o volume, ponho a boca do menino
+   para acompanhar a voz e encaixo no jogo.
+
+Bom saber
+- As falas 12, 13 e 14 são cantorias: a voz sintética vai falar, não cantar. Se quiser cantado,
+  grave só essas três na página gravar.html.
+- Algumas falas foram escritas do jeito que devem soar (ex.: "Ops" em vez de "Opss"); a legenda
+  do jogo continua com o texto original.
+- O plano gratuito aceita até 3.000 caracteres de texto por arquivo; cada arquivo de falas tem 1.245.
+- Se alguma palavra sair estranha (por exemplo "COGERH" na narração), me diga como deve soar e eu ajusto.
